@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Shape Your Body: Value Gradients for Multi-Embodiment Robot Co-Design">
+        <meta name="keywords" content="robot co-design, multi-embodiment, value gradients, reinforcement learning, locomotion, URMA, morphology optimization">
+        <meta name="author" content="Nico Bohlinger, Jan Peters">
+        <title>Shape Your Body</title>
+        <link rel="stylesheet" href="custom.css">
+        <link rel="icon" type="image/x-icon" href="./images/favicon.png">
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <h1 hidden></h1>
+
+        <script src="https://kit.fontawesome.com/02e2ed10b8.js" crossorigin="anonymous"></script>
+
+        <div>
+            <div id="title-container">
+                <p id="paper-title">
+                    <span class="title-gradient">Shape Your Body:</span><br>Value Gradients for Multi-Embodiment Robot Co-Design
+                </p>
+                <div id="authors">
+                    <div class="author-row">
+                        <a class="author" href="https://www.ias.informatik.tu-darmstadt.de/Team/NicoBohlinger" target="_blank">Nico Bohlinger<sup>1</sup></a>
+                        <a class="author" href="https://www.ias.informatik.tu-darmstadt.de/Team/JanPeters" target="_blank">Jan Peters<sup>1,2</sup></a>
+                    </div>
+                </div>
+                <div id="affiliations">
+                    <p class="affiliation"><sup>1</sup>Technical University of Darmstadt</p>
+                    <p class="affiliation"><sup>2</sup>Robotics Institute Germany (RIG); DFKI; hessian.AI</p>
+                </div>
+
+                <p id="conference-name">Under Review</p>
+            </div>
+
+            <div id="social-buttons">
+                <a href="#" class="social-button social-button-disabled" aria-disabled="true" onclick="event.preventDefault();">
+                    <i class="fa fa-file-pdf"></i>
+                    <p>Paper (soon)</p>
+                </a>
+                <a href="#" class="social-button social-button-disabled" aria-disabled="true" onclick="event.preventDefault();">
+                    <i class="fa fa-github"></i>
+                    <p>Code (soon)</p>
+                </a>
+                <a href="#" class="social-button social-button-disabled" aria-disabled="true" onclick="event.preventDefault();">
+                    <i class="fa fa-youtube"></i>
+                    <p>Video (soon)</p>
+                </a>
+            </div>
+
+            <div id="tldr-container">
+                <p id="tldr-text"><span id="tldr-first">TLDR:</span> We train one multi-embodiment policy and value function across many robots,<br>then use gradients of the frozen value function to co-design new robots — no new RL training per design.</p>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Try It Yourself</p>
+                <p class="section-text">
+                    Pick a robot and a design state to inspect what VGDS does to the embodiment.
+                    <span class="highlighted-text">Reference</span> is the nominal URDF design,
+                    <span class="highlighted-text">initial</span> is a random perturbed starting point, and
+                    <span class="highlighted-text">optimized</span> is the design VGDS converged to.
+                    The iteration slider will eventually scrub through the 51 gradient steps of VGDS.
+                </p>
+                <div id="syb-demo">
+                    <div class="syb-controls">
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">Robot</span>
+                            <div class="syb-tab-group" id="syb-robot-tabs">
+                                <button class="syb-tab" data-robot="unitree_go2">Unitree Go2</button>
+                                <button class="syb-tab active" data-robot="mit_humanoid">MIT Humanoid</button>
+                                <button class="syb-tab" data-robot="golem">Golem</button>
+                                <button class="syb-tab" data-robot="anymal_c">ANYmal C</button>
+                                <button class="syb-tab" data-robot="booster_t1">Booster T1</button>
+                                <button class="syb-tab" data-robot="mini_pi">Mini PI</button>
+                                <button class="syb-tab" data-robot="fourier_gr1t2">Fourier GR1-T2</button>
+                            </div>
+                        </div>
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">Mode</span>
+                            <div class="syb-tab-group" id="syb-mode-tabs">
+                                <button class="syb-tab" data-mode="reference">Reference</button>
+                                <button class="syb-tab active" data-mode="codesign">Co-Design</button>
+                            </div>
+                        </div>
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">Seed</span>
+                            <div class="syb-tab-group" id="syb-seed-tabs">
+                                <button class="syb-tab active" data-seed="0">0</button>
+                                <button class="syb-tab" data-seed="1">1</button>
+                                <button class="syb-tab" data-seed="2">2</button>
+                                <button class="syb-tab" data-seed="3">3</button>
+                                <button class="syb-tab" data-seed="4">4</button>
+                                <button class="syb-tab" data-seed="5">5</button>
+                                <button class="syb-tab" data-seed="6">6</button>
+                                <button class="syb-tab" data-seed="7">7</button>
+                                <button class="syb-tab" data-seed="8">8</button>
+                                <button class="syb-tab" data-seed="9">9</button>
+                            </div>
+                        </div>
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">VGDS iter</span>
+                            <input type="range" id="syb-iter" min="0" max="50" value="0">
+                            <span id="syb-iter-value">iter 0 / 50</span>
+                        </div>
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">Forward</span>
+                            <input type="range" id="syb-vx" min="-1" max="1" step="0.05" value="0.7">
+                            <span id="syb-vx-val">0.70</span>
+                        </div>
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">Sideways</span>
+                            <input type="range" id="syb-vy" min="-1" max="1" step="0.05" value="0">
+                            <span id="syb-vy-val">0.00</span>
+                        </div>
+                        <div class="syb-control-row">
+                            <span class="syb-control-label">Turning</span>
+                            <input type="range" id="syb-vyaw" min="-1" max="1" step="0.05" value="0">
+                            <span id="syb-vyaw-val">0.00</span>
+                        </div>
+                        <div class="syb-control-row syb-control-buttons">
+                            <button class="syb-tab" id="syb-play">Pause</button>
+                            <button class="syb-tab" id="syb-reset">Reset pose</button>
+                            <button class="syb-tab" id="syb-follow">Follow camera</button>
+                        </div>
+                    </div>
+                    <div id="syb-canvas-wrap">
+                        <div id="syb-canvas"></div>
+                        <div id="syb-status">Loading…</div>
+                    </div>
+                    <p class="syb-note">
+                        Phase 2 prototype: the URMA policy trained for this robot's design space runs live in the browser. Velocity commands feed the policy; reset returns to the home keyframe.
+                    </p>
+                </div>
+                <script type="module" src="demo/demo.js"></script>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Overview</p>
+                <p class="section-text">
+                    <span class="highlighted-text">Can a value function trained across many robots act as a reusable design model?</span>
+                    Classical robot co-design pairs an outer search over embodiments with an inner control loop, requiring a fresh reinforcement learning run for every new robot or design space.
+                    We instead train a single embodiment-aware policy and value function over a wide distribution of robot designs.
+                    Once trained, the value function is frozen and reused as a <span class="highlighted-text">differentiable surrogate</span>: we co-design new robots through <span class="highlighted-text">value gradients</span>, optimizing up to <span class="highlighted-text">1100 continuous embodiment parameters</span> per robot without any new RL training.
+                </p>
+                <div class="video-placeholder">
+                    <i class="fa fa-video"></i>
+                    <p>Overview video coming soon</p>
+                </div>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Value-Gradient Design Search</p>
+                <p class="section-text">
+                    During training, each parallel environment samples a new robot design and keeps it fixed for the episode.
+                    A <span class="highlighted-text">URMA</span>-based policy and ensemble critic learn to control and evaluate the full distribution of designs.
+                    We modify the standard URMA critic into a <span class="highlighted-text">direct-design critic</span> that makes value predictions more sensitive to the embodiment parameters, yielding stronger design gradients.
+                </p>
+                <img src="images/method_overview.png" alt="Method overview" class="section-image">
+                <p class="section-text">
+                    After training, the policy and critic are frozen.
+                    <span class="highlighted-text">Value-Gradient Design Search (VGDS)</span> optimizes a normalized design vector by gradient ascent on the average critic prediction over a fixed bank of states, regularized by a soft trust region around a reference design.
+                    Each design step is the gradient of the frozen critic w.r.t. the embodiment parameters, plus the analytic trust-region term — clipped per-parameter and projected back into the valid design space.
+                    The result is a deterministic, batched, gradient-based co-design loop that reuses one trained model across many target robots.
+                </p>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Multi-Embodiment Training Set</p>
+                <p class="section-text">
+                    Our largest training set spans <span class="highlighted-text">50 robots</span> — 15 quadrupeds, 31 bipeds and humanoids, and 4 hexapods.
+                    A single URMA policy and critic are trained across all of them, with continuous embodiment randomization of masses, inertias, geometry, joint limits, PD gains, and actuator properties.
+                    Design dimensions per robot range from <span class="highlighted-text">190 up to 1177 continuous parameters</span>.
+                </p>
+                <img src="images/robot_overview.png" alt="Overview of all 50 robots used in multi-embodiment training" class="section-image">
+                <p class="section-text">
+                    The Unitree Go2 quadruped, MIT Humanoid, and Golem hexapod (highlighted in red) are the main target robots for our co-design experiments and are held out from morphology-class training sets to test cross-embodiment generalization.
+                </p>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Single-Robot Co-Design</p>
+                <p class="section-text">
+                    In the simplest setting, we train a policy and critic on randomized versions of a single robot and use them to recover better designs from perturbed embodiments.
+                    Across the Go2, MIT Humanoid, and Golem, <span class="highlighted-text">VGDS matches or beats a broad suite of derivative-free baselines</span> — Bayesian Optimization, CMA-ES, PSO, CEM, DE, ARS, TuRBO, and the gradient-based GC-PFO — all sharing the same frozen critic as their objective.
+                    Compared to RL-based co-design baselines that train a new policy per initial design (Schaff2019, FEACRL, Transform2Act, BodyGen, Stackelberg PPO), VGDS reaches on-par or slightly better return while co-designing each additional robot in <span class="highlighted-text">~1–2 minutes</span> after the one-time training run.
+                </p>
+                <div class="video-placeholder">
+                    <i class="fa fa-image"></i>
+                    <p>Result plots coming soon</p>
+                </div>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Cross-Embodiment Generalization</p>
+                <p class="section-text">
+                    We then train policies and critics on multiple base robots per morphology class — with the target robot held out — and on the full 50-robot training set.
+                    When trained on all 50 robots, <span class="highlighted-text">VGDS finds designs that exceed the nominal URDF</span> for the Go2 and MIT Humanoid.
+                    Generalization is strongest where the training distribution is most diverse, showing that a multi-embodiment critic carries information from the broader robot distribution into co-design of unseen robots.
+                </p>
+                <div class="video-placeholder">
+                    <i class="fa fa-image"></i>
+                    <p>Generalization plots coming soon</p>
+                </div>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Analyzing Discovered Designs</p>
+                <p class="section-text">
+                    Beyond optimizing full embodiments, the same value gradients can <span class="highlighted-text">identify performance-limiting design and control parameters</span>.
+                    Grouping the final design update by physical parameter type — actuator torque and velocity limits, body masses and inertias, geometry, PD gains, action scaling — gives a local diagnosis of what the critic would change to improve a given robot.
+                    This turns the multi-embodiment value function into a reusable <span class="highlighted-text">design analysis tool</span> for both new robots and existing platforms.
+                </p>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Acknowledgments</p>
+                <p class="section-text">
+                    This project was funded by National Science Centre, Poland, under the OPUS call in the Weave program UMO-2021/43/I/ST6/02711, and by the German Research Foundation (DFG) under grant number PE 2315/17-1.
+                </p>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Citation</p>
+                <div class="citation-container">
+                    <pre><code>@article{bohlinger2026shape,
+    title={Shape Your Body: Value Gradients for Multi-Embodiment Robot Co-Design},
+    author={Bohlinger, Nico and Peters, Jan},
+    year={2026}
+}</code></pre>
+                </div>
+            </div>
+
+            <div id="website-inspiration">
+                <p>This website was inspired by <a href="https://kzakka.com/robopianist/">Kevin Zakka's</a> and <a href="https://brentyi.github.io/tilted/">Brent Yi's</a> and builds on <a href="https://nico-bohlinger.github.io/one_policy_to_run_them_all_website/">Nico Bohlinger's</a>.</p>
+            </div>
+        </div>
+    </body>
+</html>

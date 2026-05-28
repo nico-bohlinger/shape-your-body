@@ -1,0 +1,271 @@
+<mujoco model="Golem">
+  <compiler angle="radian" assetdir="assets" balanceinertia="true" inertiafromgeom="false"/>
+
+  <option timestep="0.005" density="1.2" viscosity="2e-05"/>
+
+  <size nkey="1"/>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <default>
+    <default class="/">
+      <joint armature="0.01" damping="0.01" frictionloss="0.01"/>
+      <geom contype="0" conaffinity="0" group="1" solref="-1000 -80"/>
+      <site size="0.01 0.005 0.005" group="5"/>
+      <general forcelimited="true" biastype="affine" gainprm="25" biasprm="0 -25 -0.5"/>
+      <default class="visual">
+        <geom type="mesh" group="2"/>
+      </default>
+      <default class="collision">
+        <geom group="3"/>
+      </default>
+      <default class="foot">
+        <geom size="0.01 0 0" condim="6" group="4" priority="1" solimp="0.015 1 0.01"/>
+      </default>
+      <default class="reward_collision_sphere">
+        <geom group="5" rgba="1 0 0 1"/>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" colorspace="auto" name="//unnamed_texture_0" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="600"/>
+    <texture type="2d" colorspace="auto" name="texplane" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" markrgb="1 1 1" width="512" height="512"/>
+    <material name="MatPlane" class="/" texture="texplane" texuniform="true" texrepeat="2 2" specular="0.9"/>
+    <mesh name="body" class="/" file="body.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="coxa" class="/" file="coxa.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="femur" class="/" file="femur.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="tibia" class="/" file="tibia.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="tarsus" class="/" file="tarsus.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" class="/" size="100 100 0.125" type="plane" group="0" material="MatPlane"/>
+    <light name="toplight_shadow" class="/" pos="0 0 5" dir="0.0990148 0.0990148 -0.990148" type="directional" ambient="0.04 0.04 0.04" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12"/>
+    <light name="toplight_fill" class="/" pos="0 0 5" dir="0.0990148 0.0990148 -0.990148" type="directional" castshadow="false" ambient="0.04 0.04 0.04" diffuse="0.3 0.3 0.3" specular="0.08 0.08 0.08"/>
+    <body name="trunk" pos="0.00118917 -0.00426928 -0.000655209" quat="1 -0.000275942 -0.000110835 0.000132158">
+      <inertial pos="-0.000373835 -0.000601139 0.00523152" quat="0.999949 -0.004993 0.00644368 0.00600213" mass="2.76275" diaginertia="0.0131685 0.000359861 0.0268615"/>
+      <joint name="//unnamed_joint_0" type="free"/>
+      <geom name="//unnamed_geom_1" class="/" pos="0 0 0.0775668" quat="1 0 0 0" type="mesh" rgba="0.9 0.9 0.9 1" mesh="body"/>
+      <site name="imu" class="/" pos="0.126681 0.00589908 0.109824" size="0.00930906"/>
+      <camera name="track" class="/" pos="0 -1.03452 0" quat="0.707107 0.707107 0 0" mode="trackcom"/>
+      <camera name="ego_camera" class="/" pos="0.138252 0 0.121198" quat="-0.5 -0.5 0.5 0.5"/>
+      <body name="coxa_RR" pos="-0.189581 -0.0486159 0.0741428" quat="0.383417 -0.0015899 0.000570077 -0.923574">
+        <inertial pos="0.000478126 0.00556476 -0.00497797" quat="1 0.000122847 2.96512e-05 -5.97404e-05" mass="0.154651" diaginertia="0.0134991 0.000362263 0.0260456"/>
+        <joint name="coxa_joint_RR" class="/" pos="0 0 0" axis="-0.00254779 0.0075505 -0.999968" range="-3.18517 3.12701" armature="0.00899567" damping="0.0249346" frictionloss="0.00817707"/>
+        <geom name="//unnamed_geom_2" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="coxa"/>
+        <geom name="//unnamed_geom_3" class="reward_collision_sphere" size="0.0372362" pos="-0.0319043 0 0"/>
+        <body name="femur_RR" pos="0.0575922 0.00201886 0.00165778" quat="0.50008 -0.500467 0.501089 0.49836">
+          <inertial pos="0.00230965 7.02057e-05 -0.00191283" quat="0.999998 -0.00112166 0.00155559 -0.000432263" mass="0.157949" diaginertia="0.0132889 0.000358297 0.0253995"/>
+          <joint name="femur_joint_RR" class="/" pos="0 0 0" axis="-0.00742628 -0.00521281 -0.999959" range="-3.11362 3.13005" armature="0.0102104" damping="0.0199316" frictionloss="0.00937026"/>
+          <geom name="//unnamed_geom_4" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="femur"/>
+          <geom name="//unnamed_geom_5" class="reward_collision_sphere" size="0.0372362"/>
+          <body name="tibia_RR" pos="0.000770682 -0.0583224 0.00422914" quat="0.000170905 1 -0.000205667 0.000149372">
+            <inertial pos="-4.99246e-05 0.00115972 0.00202635" quat="0.999999 -0.00109626 -0.000521642 7.21788e-05" mass="0.166207" diaginertia="0.0134856 0.0003582 0.0241881"/>
+            <joint name="tibia_joint_RR" class="/" pos="0 0 0" axis="0.00518426 0.00729658 0.99996" range="-3.14714 3.27227" armature="0.00805792" damping="0.00219492" frictionloss="0.0104462"/>
+            <geom name="//unnamed_geom_6" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="tibia"/>
+            <geom name="//unnamed_geom_7" class="reward_collision_sphere" size="0.0372362"/>
+            <body name="tarsus_RR" pos="0.0960882 0.00407896 -0.000666768" quat="0.999999 -0.000956555 -2.70166e-05 0.000415729">
+              <inertial pos="0.061939 -0.00648885 0.00320998" quat="0.499812 0.499392 0.499323 0.50147" mass="0.147341" diaginertia="0.0129271 0.000335549 0.0244453"/>
+              <joint name="tarsus_joint_RR" class="/" pos="0 0 0" axis="-0.00738602 -0.00226253 0.99997" range="-3.24554 3.13012" armature="0.00994608" damping="0.0475675" frictionloss="0.00932797"/>
+              <geom name="//unnamed_geom_8" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="tarsus"/>
+              <geom name="foot_1" class="foot" size="0.00949426" pos="0.11911 0 0" quat="0 -0.707107 0 0.707107"/>
+              <geom name="//unnamed_geom_10" class="reward_collision_sphere" size="0.0372362"/>
+              <geom name="//unnamed_geom_11" class="reward_collision_sphere" size="0.0139636" pos="0.114324 0 0"/>
+              <site name="foot_1" class="foot" pos="0.11911 0 0" quat="0 -0.707107 0 0.707107" size="0.00930906"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="coxa_RM" pos="-0.00323361 -0.0675084 0.0828686" quat="0.707331 -0.000321197 0.000221979 -0.706882">
+        <inertial pos="-0.00159118 0.00052886 0.00212166" quat="0.999985 0.00291706 0.0046216 -0.000497459" mass="0.168171" diaginertia="0.013923 0.000373849 0.0269515"/>
+        <joint name="coxa_joint_RM" class="/" pos="0 0 0" axis="-0.00294284 -0.000486034 -0.999996" stiffness="0.02443" range="-3.18376 3.09795" armature="0.0092554" damping="0.0361333" frictionloss="0.0122084"/>
+        <geom name="//unnamed_geom_12" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="coxa"/>
+        <geom name="//unnamed_geom_13" class="reward_collision_sphere" size="0.0372362" pos="-0.0319043 0 0"/>
+        <body name="femur_RM" pos="0.0569998 -0.00130156 -0.00207129" quat="0.500595 -0.500445 0.499882 0.499076">
+          <inertial pos="0.000419371 8.98816e-06 -0.00240502" quat="0.999938 0.0093353 -0.00547603 -0.00250865" mass="0.152862" diaginertia="0.0139427 0.000352571 0.025595"/>
+          <joint name="femur_joint_RM" class="/" pos="0 0 0" axis="0.00589737 0.0105659 -0.999927" stiffness="0.00196615" range="-3.09628 3.13834" armature="0.00814891" damping="0.0188864" frictionloss="0.0087195"/>
+          <geom name="//unnamed_geom_14" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="femur"/>
+          <geom name="//unnamed_geom_15" class="reward_collision_sphere" size="0.0372362"/>
+          <body name="tibia_RM" pos="-0.00134948 -0.055588 0.00143261" quat="-0.000437218 1 -5.96093e-05 -7.82295e-05">
+            <inertial pos="0.00554134 0.00422633 0.00167872" quat="0.999594 0.00450402 -0.0242059 -0.0143146" mass="0.163349" diaginertia="0.0135351 0.000375288 0.0281904"/>
+            <joint name="tibia_joint_RM" class="/" pos="0 0 0" axis="0.00188993 0.00689429 0.999974" range="-3.10835 3.14657" armature="0.00933908" damping="0" frictionloss="0.00907067"/>
+            <geom name="//unnamed_geom_16" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="tibia"/>
+            <geom name="//unnamed_geom_17" class="reward_collision_sphere" size="0.0372362"/>
+            <body name="tarsus_RM" pos="0.0931524 0.00233711 0.00237813" quat="0.999999 -4.8781e-05 0.000770124 -0.000698549">
+              <inertial pos="0.0623781 0.00356688 -0.0019807" quat="0.492712 0.500164 0.508196 0.498806" mass="0.159047" diaginertia="0.0135652 0.000353284 0.0259788"/>
+              <joint name="tarsus_joint_RM" class="/" pos="0 0 0" axis="0.00812658 0.00465864 0.999956" range="-3.14117 3.11664" armature="0.0115382" damping="0" frictionloss="0.0103855"/>
+              <geom name="//unnamed_geom_18" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="tarsus"/>
+              <geom name="foot_2" class="foot" size="0.010236" pos="0.11911 0 0" quat="0 -0.707107 0 0.707107"/>
+              <geom name="//unnamed_geom_20" class="reward_collision_sphere" size="0.0372362"/>
+              <geom name="//unnamed_geom_21" class="reward_collision_sphere" size="0.0139636" pos="0.114324 0 0"/>
+              <site name="foot_2" class="foot" pos="0.11911 0 0" quat="0 -0.707107 0 0.707107" size="0.00930906"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="coxa_RF" pos="0.194649 -0.0434169 0.0749398" quat="0.923885 3.25273e-05 -1.95207e-06 -0.382669">
+        <inertial pos="-0.00340727 -0.000521756 0.000447956" quat="0.999928 0.00194172 0.00955058 0.00698388" mass="0.15946" diaginertia="0.0126121 0.000377676 0.0272016"/>
+        <joint name="coxa_joint_RF" class="/" pos="0 0 0" axis="0.00648339 0.00103393 -0.999978" range="-3.1219 3.09069" armature="0.00915886" damping="0.0321048" frictionloss="0.00831678"/>
+        <geom name="//unnamed_geom_22" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="coxa"/>
+        <geom name="//unnamed_geom_23" class="reward_collision_sphere" size="0.0372362" pos="-0.0319043 0 0"/>
+        <body name="femur_RF" pos="0.058452 0.00217661 -0.00288293" quat="0.499538 -0.499211 0.501179 0.50007">
+          <inertial pos="-0.00255117 -0.00286538 0.00264232" quat="0.999952 -0.00257633 0.00279334 0.00907444" mass="0.159831" diaginertia="0.0130719 0.000331296 0.0261215"/>
+          <joint name="femur_joint_RF" class="/" pos="0 0 0" axis="-0.000168902 0.00148368 -0.999999" stiffness="0.00448235" range="-3.21226 3.1435" armature="0.00852952" damping="0.0181159" frictionloss="0.00994666"/>
+          <geom name="//unnamed_geom_24" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="femur"/>
+          <geom name="//unnamed_geom_25" class="reward_collision_sphere" size="0.0372362"/>
+          <body name="tibia_RF" pos="8.25151e-05 -0.0586995 -0.000389824" quat="6.04554e-06 1 -3.1377e-06 -3.26472e-06">
+            <inertial pos="0.00129457 -0.0010627 0.00124638" quat="0.999953 0.00753827 0.00017873 -0.00610212" mass="0.158774" diaginertia="0.0124512 0.000370542 0.0251362"/>
+            <joint name="tibia_joint_RF" class="/" pos="0 0 0" axis="-0.00555283 0.0044125 0.999975" range="-3.0937 3.09058" armature="0.0096649" damping="0.00170447" frictionloss="0.0106321"/>
+            <geom name="//unnamed_geom_26" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="tibia"/>
+            <geom name="//unnamed_geom_27" class="reward_collision_sphere" size="0.0372362"/>
+            <body name="tarsus_RF" pos="0.0973521 -0.00440203 -0.00170327" quat="0.999997 -0.000614221 -0.00164299 -0.00177631">
+              <inertial pos="0.0684876 0.00532664 -0.00219727" quat="0.480803 0.490839 0.522464 0.504912" mass="0.163258" diaginertia="0.0125507 0.000389577 0.0253497"/>
+              <joint name="tarsus_joint_RF" class="/" pos="0 0 0" axis="0.00144727 -0.0133257 0.99991" stiffness="0.0268574" range="-3.24 3.09324" armature="0.00631108" damping="0.00777895" frictionloss="0.00939226"/>
+              <geom name="//unnamed_geom_28" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="tarsus"/>
+              <geom name="foot_3" class="foot" size="0.00858959" pos="0.11911 0 0" quat="0 -0.707107 0 0.707107"/>
+              <geom name="//unnamed_geom_30" class="reward_collision_sphere" size="0.0372362"/>
+              <geom name="//unnamed_geom_31" class="reward_collision_sphere" size="0.0139636" pos="0.114324 0 0"/>
+              <site name="foot_3" class="foot" pos="0.11911 0 0" quat="0 -0.707107 0 0.707107" size="0.00930906"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="coxa_LR" pos="-0.18791 0.0435271 0.0775635" quat="0.38293 8.33417e-05 0.000247624 0.923777">
+        <inertial pos="-0.00183667 0.0056431 0.00291255" quat="0.999905 0.00100407 -0.0136993 -0.000684024" mass="0.170132" diaginertia="0.0149795 0.000371572 0.0282657"/>
+        <joint name="coxa_joint_LR" class="/" pos="0 0 0" axis="-0.00198416 -0.000644838 -0.999998" stiffness="0.00767582" range="-3.1495 3.03554" armature="0.0113938" damping="0.00621103" frictionloss="0.00817342"/>
+        <geom name="//unnamed_geom_32" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="coxa"/>
+        <geom name="//unnamed_geom_33" class="reward_collision_sphere" size="0.0372362" pos="-0.0319043 0 0"/>
+        <body name="femur_LR" pos="0.057194 0.000759322 0.00293012" quat="0.500148 -0.500466 0.499281 0.500104">
+          <inertial pos="0.00184201 -0.000789518 0.00251553" quat="0.999678 -0.021048 0.0121192 0.00732674" mass="0.157573" diaginertia="0.0134754 0.000357522 0.0233067"/>
+          <joint name="femur_joint_LR" class="/" pos="0 0 0" axis="2.96004e-05 -0.00122193 0.999999" stiffness="0.0147436" range="-3.26239 3.19411" armature="0.00909017" damping="0.0223577" frictionloss="0.0082264"/>
+          <geom name="//unnamed_geom_34" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="femur"/>
+          <geom name="//unnamed_geom_35" class="reward_collision_sphere" size="0.0372362"/>
+          <body name="tibia_LR" pos="0.000869544 -0.055695 0.00139186" quat="2.53197e-06 1 3.72969e-07 -5.10025e-06">
+            <inertial pos="-0.00221461 0.0053368 -0.00164227" quat="0.999995 0.00229932 -0.00027592 -0.00196191" mass="0.162341" diaginertia="0.013515 0.000377 0.026159"/>
+            <joint name="tibia_joint_LR" class="/" pos="0 0 0" axis="-6.14527e-05 -0.0035333 -0.999994" range="-3.08326 3.13091" armature="0.00952061" damping="0.0481101" frictionloss="0.00889691"/>
+            <geom name="//unnamed_geom_36" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="tibia"/>
+            <geom name="//unnamed_geom_37" class="reward_collision_sphere" size="0.0372362"/>
+            <body name="tarsus_LR" pos="0.0865883 0.00216926 0.00185915" quat="0.999998 -0.000807816 0.00127691 -0.000970037">
+              <inertial pos="0.0590593 -0.0011314 0.000352921" quat="0.503114 0.499244 0.501977 0.495632" mass="0.156305" diaginertia="0.0140003 0.000365168 0.0268635"/>
+              <joint name="tarsus_joint_LR" class="/" pos="0 0 0" axis="-0.0112075 -0.00966837 -0.99989" stiffness="0.019441" range="-3.06333 3.14082" armature="0.00930928" damping="0.0261294" frictionloss="0.0112571"/>
+              <geom name="//unnamed_geom_38" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="tarsus"/>
+              <geom name="foot_4" class="foot" size="0.00946796" pos="0.11911 0 0" quat="0.707107 0 -0.707107 0"/>
+              <geom name="//unnamed_geom_40" class="reward_collision_sphere" size="0.0372362"/>
+              <geom name="//unnamed_geom_41" class="reward_collision_sphere" size="0.0139636" pos="0.114324 0 0"/>
+              <site name="foot_4" class="foot" pos="0.11911 0 0" quat="0.707107 0 -0.707107 0" size="0.00930906"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="coxa_LM" pos="0.00148534 0.0687789 0.0816911" quat="0.707069 -9.34517e-05 -2.43945e-05 0.707145">
+        <inertial pos="0.00367821 -0.00198315 0.00242654" quat="0.999993 0.00223357 -0.00272517 0.00121139" mass="0.17054" diaginertia="0.0145642 0.000405562 0.0253622"/>
+        <joint name="coxa_joint_LM" class="/" pos="0 0 0" axis="0.003255 0.0094764 -0.99995" stiffness="0.000726303" range="-3.14245 3.1432" armature="0.0071015" damping="0.033479" frictionloss="0.00983537"/>
+        <geom name="//unnamed_geom_42" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="coxa"/>
+        <geom name="//unnamed_geom_43" class="reward_collision_sphere" size="0.0372362" pos="-0.0319043 0 0"/>
+        <body name="femur_LM" pos="0.0621051 0.00463865 -0.00285861" quat="0.500734 -0.500482 0.499345 0.499437">
+          <inertial pos="-0.00253825 6.0402e-05 -0.00429172" quat="0.999998 -0.00133742 -0.00122405 0.000421749" mass="0.161181" diaginertia="0.0137393 0.000374986 0.0258483"/>
+          <joint name="femur_joint_LM" class="/" pos="0 0 0" axis="-0.00151818 -0.00786534 0.999968" range="-3.09022 3.18875" armature="0.00964498" damping="0.0174104" frictionloss="0.00865341"/>
+          <geom name="//unnamed_geom_44" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="femur"/>
+          <geom name="//unnamed_geom_45" class="reward_collision_sphere" size="0.0372362"/>
+          <body name="tibia_LM" pos="-0.00289289 -0.052399 -0.00253864" quat="0.000207666 0.999999 -0.000684275 0.000706105">
+            <inertial pos="0.00070623 0.00499412 -0.00613942" quat="0.999505 0.0303242 0.00641639 0.00538761" mass="0.168424" diaginertia="0.0133033 0.000382097 0.0269236"/>
+            <joint name="tibia_joint_LM" class="/" pos="0 0 0" axis="0.00603027 0.0101109 -0.999931" stiffness="0.0272855" range="-3.15208 3.22343" armature="0.0100151" damping="0.0179212" frictionloss="0.00963589"/>
+            <geom name="//unnamed_geom_46" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="tibia"/>
+            <geom name="//unnamed_geom_47" class="reward_collision_sphere" size="0.0372362"/>
+            <body name="tarsus_LM" pos="0.0927431 0.00504685 -0.00412189" quat="1 0.00063591 -0.000299651 0.000172534">
+              <inertial pos="0.0630185 -0.000826909 0.00335723" quat="0.483196 0.502626 0.493843 0.519623" mass="0.153356" diaginertia="0.013032 0.000379934 0.0264183"/>
+              <joint name="tarsus_joint_LM" class="/" pos="0 0 0" axis="0.0175069 0.00556053 -0.999831" stiffness="0.0282026" range="-3.16955 3.21855" armature="0.0088839" damping="0.0180523" frictionloss="0.00912399"/>
+              <geom name="//unnamed_geom_48" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="tarsus"/>
+              <geom name="foot_5" class="foot" size="0.00967092" pos="0.11911 0 0" quat="0.707107 0 -0.707107 0"/>
+              <geom name="//unnamed_geom_50" class="reward_collision_sphere" size="0.0372362"/>
+              <geom name="//unnamed_geom_51" class="reward_collision_sphere" size="0.0139636" pos="0.114324 0 0"/>
+              <site name="foot_5" class="foot" pos="0.11911 0 0" quat="0.707107 0 -0.707107 0" size="0.00930906"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="coxa_LF" pos="0.188475 0.0442806 0.0732496" quat="0.924438 -0.0015247 -0.000828673 0.381328">
+        <inertial pos="0.0023046 -0.00225301 0.000849821" quat="0.999512 0.0199203 -0.0127933 -0.0203943" mass="0.155339" diaginertia="0.0139309 0.000359011 0.0289131"/>
+        <joint name="coxa_joint_LF" class="/" pos="0 0 0" axis="0.00542977 0.0110971 -0.999924" stiffness="0.0340493" range="-3.14027 3.14811" armature="0.0102352" damping="0.0153643" frictionloss="0.0104441"/>
+        <geom name="//unnamed_geom_52" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="coxa"/>
+        <geom name="//unnamed_geom_53" class="reward_collision_sphere" size="0.0372362" pos="-0.0319043 0 0"/>
+        <body name="femur_LF" pos="0.0622113 0.00222444 -0.00133447" quat="0.500043 -0.499941 0.499965 0.50005">
+          <inertial pos="-0.00383855 -0.00208212 -0.00515228" quat="0.999971 0.00755686 -0.00120561 0.000336594" mass="0.164156" diaginertia="0.0140702 0.000371232 0.0280171"/>
+          <joint name="femur_joint_LF" class="/" pos="0 0 0" axis="-0.00263789 -0.00364191 0.99999" range="-3.12568 3.0103" armature="0.00845597" damping="0.0280761" frictionloss="0.00998858"/>
+          <geom name="//unnamed_geom_54" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="femur"/>
+          <geom name="//unnamed_geom_55" class="reward_collision_sphere" size="0.0372362"/>
+          <body name="tibia_LF" pos="-0.00399337 -0.0544902 0.00350829" quat="6.07068e-05 1 0.000366027 -0.000567632">
+            <inertial pos="-0.0016013 0.0026657 -0.000473608" quat="0.999998 -0.00204375 -0.000673657 6.35078e-05" mass="0.161414" diaginertia="0.0134426 0.000377062 0.0260375"/>
+            <joint name="tibia_joint_LF" class="/" pos="0 0 0" axis="0.0113636 0.0089683 -0.999895" range="-3.16357 3.10715" armature="0.011497" damping="0" frictionloss="0.0101588"/>
+            <geom name="//unnamed_geom_56" class="/" type="mesh" rgba="0.2 0.2 0.2 1" mesh="tibia"/>
+            <geom name="//unnamed_geom_57" class="reward_collision_sphere" size="0.0372362"/>
+            <body name="tarsus_LF" pos="0.0926262 -0.00339457 -0.0031555" quat="1 0.000384114 0.000407138 0.000409431">
+              <inertial pos="0.066736 0.00202036 -0.0012467" quat="0.502356 0.496973 0.499781 0.500874" mass="0.162183" diaginertia="0.0131607 0.00036095 0.0255154"/>
+              <joint name="tarsus_joint_LF" class="/" pos="0 0 0" axis="-0.000815172 -0.00403544 -0.999992" stiffness="0.0294342" range="-3.04787 3.03859" armature="0.00939691" damping="0.0159815" frictionloss="0.00853162"/>
+              <geom name="//unnamed_geom_58" class="/" type="mesh" rgba="0.9 0.9 0.9 1" mesh="tarsus"/>
+              <geom name="foot_6" class="foot" size="0.00813783" pos="0.11911 0 0" quat="0.707107 0 -0.707107 0"/>
+              <geom name="//unnamed_geom_60" class="reward_collision_sphere" size="0.0372362"/>
+              <geom name="//unnamed_geom_61" class="reward_collision_sphere" size="0.0139636" pos="0.114324 0 0"/>
+              <site name="foot_6" class="foot" pos="0.11911 0 0" quat="0.707107 0 -0.707107 0" size="0.00930906"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair class="/" geom1="floor" geom2="foot_1" name="//unnamed_contact_0"/>
+    <pair class="/" geom1="floor" geom2="foot_2" name="//unnamed_contact_1"/>
+    <pair class="/" geom1="floor" geom2="foot_3" name="//unnamed_contact_2"/>
+    <pair class="/" geom1="floor" geom2="foot_4" name="//unnamed_contact_3"/>
+    <pair class="/" geom1="floor" geom2="foot_5" name="//unnamed_contact_4"/>
+    <pair class="/" geom1="floor" geom2="foot_6" name="//unnamed_contact_5"/>
+  </contact>
+
+  <actuator>
+    <general name="coxa_joint_RR" class="/" joint="coxa_joint_RR" forcerange="-7.03647 7.03647" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="femur_joint_RR" class="/" joint="femur_joint_RR" forcerange="-6.75505 6.75505" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tibia_joint_RR" class="/" joint="tibia_joint_RR" forcerange="-8.18089 8.18089" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tarsus_joint_RR" class="/" joint="tarsus_joint_RR" forcerange="-7.07475 7.07475" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="coxa_joint_RM" class="/" joint="coxa_joint_RM" forcerange="-6.82142 6.82142" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="femur_joint_RM" class="/" joint="femur_joint_RM" forcerange="-7.17056 7.17056" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tibia_joint_RM" class="/" joint="tibia_joint_RM" forcerange="-8.39542 8.39542" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tarsus_joint_RM" class="/" joint="tarsus_joint_RM" forcerange="-6.30993 6.30993" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="coxa_joint_RF" class="/" joint="coxa_joint_RF" forcerange="-6.38762 6.38762" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="femur_joint_RF" class="/" joint="femur_joint_RF" forcerange="-5.19344 5.19344" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tibia_joint_RF" class="/" joint="tibia_joint_RF" forcerange="-6.84088 6.84088" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tarsus_joint_RF" class="/" joint="tarsus_joint_RF" forcerange="-5.2163 5.2163" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="coxa_joint_LR" class="/" joint="coxa_joint_LR" forcerange="-7.6289 7.6289" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="femur_joint_LR" class="/" joint="femur_joint_LR" forcerange="-7.13302 7.13302" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tibia_joint_LR" class="/" joint="tibia_joint_LR" forcerange="-6.64874 6.64874" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tarsus_joint_LR" class="/" joint="tarsus_joint_LR" forcerange="-6.86422 6.86422" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="coxa_joint_LM" class="/" joint="coxa_joint_LM" forcerange="-6.90204 6.90204" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="femur_joint_LM" class="/" joint="femur_joint_LM" forcerange="-6.92158 6.92158" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tibia_joint_LM" class="/" joint="tibia_joint_LM" forcerange="-8.02658 8.02658" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tarsus_joint_LM" class="/" joint="tarsus_joint_LM" forcerange="-7.24032 7.24032" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="coxa_joint_LF" class="/" joint="coxa_joint_LF" forcerange="-7.18418 7.18418" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="femur_joint_LF" class="/" joint="femur_joint_LF" forcerange="-7.71188 7.71188" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tibia_joint_LF" class="/" joint="tibia_joint_LF" forcerange="-6.92453 6.92453" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+    <general name="tarsus_joint_LF" class="/" joint="tarsus_joint_LF" forcerange="-6.72202 6.72202" gainprm="21.3008" biasprm="0 -21.3008 -0.4364"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_1" name="foot_1_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_2" name="foot_2_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_3" name="foot_3_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_4" name="foot_4_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_5" name="foot_5_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_6" name="foot_6_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.1457 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+  </keyframe>
+</mujoco>
