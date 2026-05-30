@@ -872,8 +872,11 @@ export class MuJoCoViewer {
     this.controls.target.copy(target);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.1;
-    this.controls.minDistance = extent * 0.2;
-    this.controls.maxDistance = extent * 6;
+    // Bound zoom independently of mjModel.stat.extent: the floor is 100×100m so
+    // extent ≈ 50m and the extent-based heuristic prevents zooming anywhere
+    // near the robot.  Fixed bounds cover small bipeds to tall humanoids.
+    this.controls.minDistance = 0.2;
+    this.controls.maxDistance = 20;
     this.controls.update();
 
     // Lighting
@@ -1311,10 +1314,19 @@ export class MuJoCoViewer {
     }
 
     // ── Normal physics mode ───────────────────────────────
+    // Fixed-timestep accumulator: dt across frames is added to a bank, then we
+    // drain it timestepMs at a time so the simulation stays in lockstep with
+    // wall-clock time even when (dt % timestepMs) != 0.  Without this the
+    // remainder was lost every frame and the sim ran ~10% slower than real.
     const timestepMs = this.mjModel.opt.timestep * 1000;
-    const nsteps = Math.floor(dt / timestepMs);
+    const MAX_STEPS_PER_FRAME = 30;
+    this._physicsAccumulator = Math.min(
+      (this._physicsAccumulator || 0) + dt,
+      timestepMs * MAX_STEPS_PER_FRAME,
+    );
 
-    for (let i = 0; i < Math.min(nsteps, 30); i++) {
+    let stepsThisFrame = 0;
+    while (this._physicsAccumulator >= timestepMs && stepsThisFrame < MAX_STEPS_PER_FRAME) {
       if (this.dragging) {
         this.syncBodies();
         this._updateDragAnchor();
@@ -1328,6 +1340,9 @@ export class MuJoCoViewer {
       this.mujoco.mj_step1(this.mjModel, this.mjData);
       this.onControlStep(this.mjModel, this.mjData);
       this.mujoco.mj_step2(this.mjModel, this.mjData);
+
+      this._physicsAccumulator -= timestepMs;
+      stepsThisFrame++;
     }
 
     this.syncBodies();

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Shape Your Body: Value Gradients for Multi-Embodiment Robot Co-Design">
+        <meta name="description" content="Shape Your Body: Value Gradients for Multi-Embodiment Robot Design">
         <meta name="keywords" content="robot co-design, multi-embodiment, value gradients, reinforcement learning, locomotion, URMA, morphology optimization">
         <meta name="author" content="Nico Bohlinger, Jan Peters">
         <title>Shape Your Body</title>
@@ -18,6 +18,14 @@
                 }
             }
         </script>
+
+        <script>
+            window.MathJax = {
+                tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+                svg: { fontCache: 'global' }
+            };
+        </script>
+        <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     </head>
 
     <body>
@@ -28,7 +36,7 @@
         <div>
             <div id="title-container">
                 <p id="paper-title">
-                    <span class="title-gradient">Shape Your Body:</span><br>Value Gradients for Multi-Embodiment Robot Co-Design
+                    <span class="title-gradient">Shape Your Body:</span><br>Value Gradients for Multi-Embodiment Robot Design
                 </p>
                 <div id="authors">
                     <div class="author-row">
@@ -60,17 +68,15 @@
             </div>
 
             <div id="tldr-container">
-                <p id="tldr-text"><span id="tldr-first">TLDR:</span> We train one multi-embodiment policy and value function across many robots,<br>then use gradients of the frozen value function to co-design new robots — no new RL training per design.</p>
+                <p id="tldr-text"><span id="tldr-first">TLDR:</span> Train one multi-embodiment policy and value function, then design hundreds of new robots with value gradients in just minutes.</p>
             </div>
 
             <div class="section-container">
                 <p class="section-header">Try It Yourself</p>
                 <p class="section-text">
-                    Pick a robot and a design state to inspect what VGDS does to the embodiment.
-                    <span class="highlighted-text">Reference</span> is the nominal URDF design,
-                    <span class="highlighted-text">initial</span> is a random perturbed starting point, and
-                    <span class="highlighted-text">optimized</span> is the design VGDS converged to.
-                    The iteration slider will eventually scrub through the 51 gradient steps of VGDS.
+                    Choose a robot and inspect how <span class="highlighted-text">Value-Gradient Design Search (VGDS)</span> changes its embodiment.
+                    Reference is the nominal URDF, and Co-Design shows the <span class="highlighted-text">optimized design from a perturbed start</span>.
+                    Use the sliders to explore the designs and control the policy live.
                 </p>
                 <div id="syb-demo">
                     <div class="syb-controls">
@@ -139,7 +145,7 @@
                         <div id="syb-status">Loading…</div>
                     </div>
                     <p class="syb-note">
-                        Phase 2 prototype: the URMA policy trained for this robot's design space runs live in the browser. Velocity commands feed the policy; reset returns to the home keyframe.
+                        Live browser demo: an URMA policy runs locally for the selected robot and design. Velocity commands steer the policy.
                     </p>
                 </div>
                 <script type="module" src="demo/demo.js"></script>
@@ -148,85 +154,115 @@
             <div class="section-container">
                 <p class="section-header">Overview</p>
                 <p class="section-text">
-                    <span class="highlighted-text">Can a value function trained across many robots act as a reusable design model?</span>
-                    Classical robot co-design pairs an outer search over embodiments with an inner control loop, requiring a fresh reinforcement learning run for every new robot or design space.
-                    We instead train a single embodiment-aware policy and value function over a wide distribution of robot designs.
-                    Once trained, the value function is frozen and reused as a <span class="highlighted-text">differentiable surrogate</span>: we co-design new robots through <span class="highlighted-text">value gradients</span>, optimizing up to <span class="highlighted-text">1100 continuous embodiment parameters</span> per robot without any new RL training.
+                    <span class="highlighted-text">Can a value function trained across many robots become a reusable design model?</span>
+                    We train one embodiment-aware policy and value function across a broad robot distribution.
+                    After training, the value function is frozen and reused as a <span class="highlighted-text">differentiable surrogate</span>: new robots are optimized by following value gradients inside a soft trust region, over design spaces with <span class="highlighted-text">more than 1100 parameters</span>.
                 </p>
-                <div class="video-placeholder">
-                    <i class="fa fa-video"></i>
-                    <p>Overview video coming soon</p>
-                </div>
+                <img src="images/hero.png" alt="Shape Your Body method overview" class="section-image">
             </div>
 
             <div class="section-container">
                 <p class="section-header">Value-Gradient Design Search</p>
                 <p class="section-text">
-                    During training, each parallel environment samples a new robot design and keeps it fixed for the episode.
-                    A <span class="highlighted-text">URMA</span>-based policy and ensemble critic learn to control and evaluate the full distribution of designs.
-                    We modify the standard URMA critic into a <span class="highlighted-text">direct-design critic</span> that makes value predictions more sensitive to the embodiment parameters, yielding stronger design gradients.
+                    During training, each environment samples a robot design and keeps it fixed for the episode.
+                    A <span class="highlighted-text">Unified Robot Morphology Architecture (URMA)</span>-based policy and direct-design critic learn to control and evaluate the full design distribution with <span class="highlighted-text">PPO</span>.
+                    The critic receives embodiment information more directly than the standard URMA critic, which yields stronger design gradients.
                 </p>
-                <img src="images/method_overview.png" alt="Method overview" class="section-image">
                 <p class="section-text">
-                    After training, the policy and critic are frozen.
-                    <span class="highlighted-text">Value-Gradient Design Search (VGDS)</span> optimizes a normalized design vector by gradient ascent on the average critic prediction over a fixed bank of states, regularized by a soft trust region around a reference design.
-                    Each design step is the gradient of the frozen critic w.r.t. the embodiment parameters, plus the analytic trust-region term — clipped per-parameter and projected back into the valid design space.
-                    The result is a deterministic, batched, gradient-based co-design loop that reuses one trained model across many target robots.
+                    After RL training, VGDS optimizes a normalized design vector \(f\) by <span class="highlighted-text">ascending the frozen critic's prediction</span> over a fixed state bank, <span class="highlighted-text">while staying close to a reference design</span> \(f_{\mathrm{ref}}\):
+                </p>
+                <div class="equation-box">
+                    \[
+                    \hat{J}_{\lambda}(f)
+                    =
+                    \frac{1}{M}\sum_{m=1}^{M}\bar{V}(s_m,\Phi(f))
+                    -
+                    \lambda\frac{\|f-f_{\mathrm{ref}}\|_2^2}{d_\mathrm{design}}
+                    \]
+                </div>
+                <p class="section-text">
+                    Each step follows the value gradient, applies the trust-region penalty, and clips the result back into the valid design space:
+                </p>
+                <div class="equation-box">
+                    \[
+                    f_{n+1}
+                    =
+                    \mathrm{clip}_{[-1,1]}
+                    \left(
+                    f_n + \mathrm{clip}_{[-\delta_{\max},\delta_{\max}]}
+                    \left[\Delta_{\mathrm{Adam}}\left(\nabla_f \hat{J}_{\lambda}(f_n)\right)\right]
+                    \right)
+                    \]
+                </div>
+                <p class="section-text">
+                    This gives a design loop based on one trained model that <span class="highlighted-text">can be batched and reused for many robots</span>.
                 </p>
             </div>
 
             <div class="section-container">
                 <p class="section-header">Multi-Embodiment Training Set</p>
                 <p class="section-text">
-                    Our largest training set spans <span class="highlighted-text">50 robots</span> — 15 quadrupeds, 31 bipeds and humanoids, and 4 hexapods.
-                    A single URMA policy and critic are trained across all of them, with continuous embodiment randomization of masses, inertias, geometry, joint limits, PD gains, and actuator properties.
-                    Design dimensions per robot range from <span class="highlighted-text">190 up to 1177 continuous parameters</span>.
+                    Our largest training set contains <span class="highlighted-text">50 robots</span>: 15 quadrupeds, 31 bipeds and humanoids, and 4 hexapods.
+                    One URMA policy and critic are trained across all of them, with randomization over masses, inertias, geometry, joint limits, PD gains, and actuator properties.
+                    Each robot has <span class="highlighted-text">190 to 1177 continuous design parameters</span>.
                 </p>
                 <img src="images/robot_overview.png" alt="Overview of all 50 robots used in multi-embodiment training" class="section-image">
-                <p class="section-text">
-                    The Unitree Go2 quadruped, MIT Humanoid, and Golem hexapod (highlighted in red) are the main target robots for our co-design experiments and are held out from morphology-class training sets to test cross-embodiment generalization.
-                </p>
             </div>
 
             <div class="section-container">
-                <p class="section-header">Single-Robot Co-Design</p>
+                <p class="section-header">Single-Robot Design</p>
                 <p class="section-text">
-                    In the simplest setting, we train a policy and critic on randomized versions of a single robot and use them to recover better designs from perturbed embodiments.
-                    Across the Go2, MIT Humanoid, and Golem, <span class="highlighted-text">VGDS matches or beats a broad suite of derivative-free baselines</span> — Bayesian Optimization, CMA-ES, PSO, CEM, DE, ARS, TuRBO, and the gradient-based GC-PFO — all sharing the same frozen critic as their objective.
-                    Compared to RL-based co-design baselines that train a new policy per initial design (Schaff2019, FEACRL, Transform2Act, BodyGen, Stackelberg PPO), VGDS reaches on-par or slightly better return while co-designing each additional robot in <span class="highlighted-text">~1–2 minutes</span> after the one-time training run.
+                    First, we train one policy and critic per target robot, then optimize perturbed designs of that same robot.
+                    Across the Unitree Go2 quadruped, MIT Humanoid, and Golem hexapod, <span class="highlighted-text">VGDS matches or outperforms strong surrogate-search baselines</span>, including BO, CMA-ES, PSO, CEM, DE, ARS, TuRBO, and GC-PFO.
                 </p>
-                <div class="video-placeholder">
-                    <i class="fa fa-image"></i>
-                    <p>Result plots coming soon</p>
-                </div>
+                <img src="images/e1_ranking_return.png" alt="Single-robot design: mean return improvement per method" class="section-image">
+                <p class="section-text">
+                    <span class="highlighted-text">Against adapted RL-based co-design baselines</span>, VGDS reaches similar or slightly better final return.
+                    The main difference is cost: RL baselines train a new policy for every initial design, while VGDS trains once.
+                    After one <span class="highlighted-text">7–9 hour</span> training run, each additional design takes only <span class="highlighted-text">1–2 minutes</span> of search.
+                </p>
+                <img src="images/rl_vs_frozen_combined.png" alt="VGDS vs RL-based co-design baselines: return over steps and cumulative design time" class="section-image">
             </div>
 
             <div class="section-container">
-                <p class="section-header">Cross-Embodiment Generalization</p>
+                <p class="section-header">Generalization Across Robots</p>
                 <p class="section-text">
-                    We then train policies and critics on multiple base robots per morphology class — with the target robot held out — and on the full 50-robot training set.
-                    When trained on all 50 robots, <span class="highlighted-text">VGDS finds designs that exceed the nominal URDF</span> for the Go2 and MIT Humanoid.
-                    Generalization is strongest where the training distribution is most diverse, showing that a multi-embodiment critic carries information from the broader robot distribution into co-design of unseen robots.
+                    We then train reusable policies and critics on morphology-class robot sets, with the target robot held out, and on the full 50-robot set.
+                    With all 50 robots, <span class="highlighted-text">VGDS improves beyond the nominal URDF</span> for Unitree Go2 and MIT Humanoid and Golem.
+                    For Golem, the hexapod-only model performs best, likely because the full 50-robot set is dominated by quadrupeds and bipeds.
                 </p>
-                <div class="video-placeholder">
-                    <i class="fa fa-image"></i>
-                    <p>Generalization plots coming soon</p>
-                </div>
+                <img src="images/e2_e4_ranking_return.png" alt="Effect of training set: held-out morphology class vs full 50-robot set" class="section-image">
             </div>
 
             <div class="section-container">
-                <p class="section-header">Analyzing Discovered Designs</p>
+                <p class="section-header">Optimized Designs</p>
                 <p class="section-text">
-                    Beyond optimizing full embodiments, the same value gradients can <span class="highlighted-text">identify performance-limiting design and control parameters</span>.
-                    Grouping the final design update by physical parameter type — actuator torque and velocity limits, body masses and inertias, geometry, PD gains, action scaling — gives a local diagnosis of what the critic would change to improve a given robot.
-                    This turns the multi-embodiment value function into a reusable <span class="highlighted-text">design analysis tool</span> for both new robots and existing platforms.
+                    Starting from perturbed designs, VGDS reshapes the embodiment to improve the frozen policy's return.
+                    Here we show optimized Unitree Go2, MIT Humanoid, and Fourier GR1-T2 designs.
+                    For several tall humanoids, <span class="highlighted-text">VGDS reshapes robots to be smaller, wider, and more compact</span>, which appears to <span class="highlighted-text">improve stability</span>.
                 </p>
+                <img src="images/main_robots.png" alt="Optimized robot designs for Unitree Go2, MIT Humanoid, and Fourier GR1 T2" class="section-image">
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Design Analysis with Value Gradients</p>
+                <p class="section-text">
+                    The same value gradients also reveal <span class="highlighted-text">which design and control parameters matter</span>.
+                    We group the update f* − f<sub>ref</sub> by body part and parameter type, <span class="highlighted-text">turning the optimized design into a diagnostic tool</span>.
+                </p>
+                <p class="section-text">
+                    For the MIT Humanoid, the strongest changes are nominal joint positions, PD gains, and reduced foot size.
+                    For the Golem, VGDS reduces the action scale, lowers the P gain, and increases the D gain.
+                    For the Unitree Go2, the changes are more physical: rear-leg joint axes, foot geometry, and front hip/calf actuator velocity limits.
+                    The full improvement comes from coupled high-dimensional updates, but the <span class="highlighted-text">grouped analysis points to bottlenecks in the design that an engineer should inspect first</span>.
+                </p>
+                <img src="images/design_analysis_counterfactuals.png" alt="Counterfactual return when copying optimized parameter groups into the initial design" class="section-image">
             </div>
 
             <div class="section-container">
                 <p class="section-header">Acknowledgments</p>
                 <p class="section-text">
-                    This project was funded by National Science Centre, Poland, under the OPUS call in the Weave program UMO-2021/43/I/ST6/02711, and by the German Research Foundation (DFG) under grant number PE 2315/17-1.
+                    This work was funded by the National Science Centre, Poland, under the OPUS Weave grant UMO-2021/43/I/ST6/02711, and by the German Research Foundation (DFG) under grant PE 2315/17-1.
                 </p>
             </div>
 
@@ -234,7 +270,7 @@
                 <p class="section-header">Citation</p>
                 <div class="citation-container">
                     <pre><code>@article{bohlinger2026shape,
-    title={Shape Your Body: Value Gradients for Multi-Embodiment Robot Co-Design},
+    title={Shape Your Body: Value Gradients for Multi-Embodiment Robot Design},
     author={Bohlinger, Nico and Peters, Jan},
     year={2026}
 }</code></pre>
@@ -242,7 +278,7 @@
             </div>
 
             <div id="website-inspiration">
-                <p>This website was inspired by <a href="https://kzakka.com/robopianist/">Kevin Zakka's</a> and <a href="https://brentyi.github.io/tilted/">Brent Yi's</a> and builds on <a href="https://nico-bohlinger.github.io/one_policy_to_run_them_all_website/">Nico Bohlinger's</a>.</p>
+                <p>This website was inspired by <a href="https://kzakka.com/robopianist/">Kevin Zakka</a>, <a href="https://brentyi.github.io/tilted/">Brent Yi</a>, <a href="https://younghyopark.me/tune-to-learn/">Younghyo Park</a>, and builds on <a href="https://nico-bohlinger.github.io/one_policy_to_run_them_all_website/">One Policy to Run Them All</a>.</p>
             </div>
         </div>
     </body>
