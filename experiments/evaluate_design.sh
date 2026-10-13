@@ -1,0 +1,11 @@
+python experiment.py \
+    --algorithm.name=urmav2_for_codesign.mjx \
+    --algorithm.eval_design_enabled=True \
+    --algorithm.eval_design_particle_path="runs/shape_your_body/go2/seed0/designs/vgds_seed0.npz" \
+    --algorithm.eval_design_output_path="runs/shape_your_body/go2/seed0/designs/vgds_seed0_evaluation.json" \
+    --environment.name=locomotion.urmav2_for_codesign.mjx \
+    --environment.train_robots="('unitree_go2',)" \
+    --environment.seed=0 \
+    --runner.mode="test" \
+    --runner.track_console=True \
+    --runner.load_model="runs/shape_your_body/go2/seed0/models/latest.model"

@@ -1,0 +1,8 @@
+from rl_x.algorithms.algorithm_manager import extract_algorithm_name_from_file, register_algorithm
+from shape_your_body.algorithms.urmav2_for_codesign.mujoco.urmav2_for_codesign import URMAv2ForCodesign
+from shape_your_body.algorithms.urmav2_for_codesign.mujoco.default_config import get_config
+from shape_your_body.algorithms.urmav2_for_codesign.mujoco.general_properties import GeneralProperties
+
+
+URMAV2_FOR_CODESIGN_MUJOCO = extract_algorithm_name_from_file(__file__)
+register_algorithm(URMAV2_FOR_CODESIGN_MUJOCO, get_config, URMAv2ForCodesign, GeneralProperties)

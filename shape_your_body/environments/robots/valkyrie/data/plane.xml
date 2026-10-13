@@ -1,0 +1,299 @@
+<mujoco model="valkyrie">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.1" armature="0.1" frictionloss="0.01"/>
+    <position forcelimited="true" kp="100" kv="2.0"/>
+
+    <default class="visual">
+      <geom type="mesh" contype="0" conaffinity="0" group="2"/>
+    </default>
+    <default class="collision">
+      <geom group="3"/>
+    </default>
+
+    <default class="foot">
+      <geom type="box" size="0.135 0.08 0.032" solimp="0.02 1 0.032" pos="0.045 0 -0.0559" priority="1" condim="6" friction="1.0 0.005 0.0001" group="4"/>
+      <site/>
+    </default>
+
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <mesh name="head_camera" file="head_camera.stl"/>
+    <mesh name="pelvis" file="pelvis.stl"/>
+    <mesh name="torsoyaw" file="torsoyaw.stl"/>
+    <mesh name="torsopitch" file="torsopitch.stl"/>
+    <mesh name="torso" file="torso.stl"/>
+    <mesh name="neckj1" file="neckj1.stl"/>
+    <mesh name="neckj2" file="neckj2.stl"/>
+    <mesh name="head_multisense" file="head_multisense.stl"/>
+    <mesh name="aj1_right" file="aj1_right.stl"/>
+    <mesh name="aj2_right" file="aj2_right.stl"/>
+    <mesh name="aj3_right" file="aj3_right.stl"/>
+    <mesh name="right_elbow_mass_sim" file="right_elbow_mass_sim.stl"/>
+    <mesh name="aj1_left" file="aj1_left.stl"/>
+    <mesh name="aj2_left" file="aj2_left.stl"/>
+    <mesh name="aj3_left" file="aj3_left.stl"/>
+    <mesh name="left_elbow_mass_sim" file="left_elbow_mass_sim.stl"/>
+    <mesh name="lj1_right" file="lj1_right.stl"/>
+    <mesh name="lj3_right" file="lj3_right.stl"/>
+    <mesh name="lj4_right" file="lj4_right.stl"/>
+    <mesh name="lj5" file="lj5.stl"/>
+    <mesh name="foot" file="foot.stl"/>
+    <mesh name="lj1_left" file="lj1_left.stl"/>
+    <mesh name="lj3_left" file="lj3_left.stl"/>
+    <mesh name="lj4_left" file="lj4_left.stl"/>
+
+
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <inertial pos="0 0 0" mass="8.22" diaginertia="0.11866378 0.097963425 0.083854638"/>
+
+      <geom type="mesh" mesh="pelvis" rgba="0.99 0.99 0.99 1"/>
+      <geom class="reward_collision_sphere" pos="0.0 0 -0.16" size="0.14"/>
+
+      <camera name="ego_camera" pos="0.14 0.0 0.63" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="torsoYawLink">
+        <inertial pos="0 0 -0.01" quat="-0.034567 0.707502 0.0340808 0.705042" mass="0.5" diaginertia="0.00107811 0.000620442 0.000608307"/>
+        <joint name="torsoYaw" pos="0 0 0" axis="0 0 1" range="-1.329 1.181"/>
+        <geom type="mesh" mesh="torsoyaw" rgba="0.99 0.99 0.99 1"/>
+        <body name="torsoPitchLink" pos="0.04191 0 0">
+          <inertial pos="0 0 0.005" quat="0.691414 0.691414 0.148145 -0.148145" mass="0.1" diaginertia="3.08343e-05 2.77707e-05 2.1274e-05"/>
+          <joint name="torsoPitch" pos="0 0 0" axis="0 -1 0" range="-0.666 0.13"/>
+          <geom type="mesh" mesh="torsopitch" rgba="0.99 0.99 0.99 1"/>
+          <body name="torso" pos="0 0 0.0203">
+            <inertial pos="-0.095548 -0.003337 0.243098" quat="0.69115 -0.157157 -0.16265 0.68641" mass="39.47" diaginertia="1.01087 0.903375 0.748281"/>
+            <joint name="torsoRoll" pos="0 0 0" axis="-1 0 0" range="-0.255 0.23"/>
+            <geom type="mesh" mesh="torso" rgba="0.99 0.99 0.99 1"/>
+            <site name="imu" pos="0 0 0.25"/>
+            <geom class="reward_collision_sphere" pos="-0.05 0 0.2" size="0.17"/>
+            <geom class="reward_collision_sphere" pos="-0.0 0.13 0.07" size="0.015"/>
+            <geom class="reward_collision_sphere" pos="-0.05 0.135 0.07" size="0.015"/>
+            <geom class="reward_collision_sphere" pos="-0.1 0.13 0.07" size="0.015"/>
+            <geom class="reward_collision_sphere" pos="-0.0 -0.13 0.07" size="0.015"/>
+            <geom class="reward_collision_sphere" pos="-0.05 -0.135 0.07" size="0.015"/>
+            <geom class="reward_collision_sphere" pos="-0.1 -0.13 0.07" size="0.015"/>
+            <body name="lowerNeckPitchLink" pos="0.0203518 0 0.33845">
+              <inertial pos="-0.02 0 0.04" quat="0.776774 -0.0791602 -0.272957 0.562005" mass="1.05" diaginertia="0.00191062 0.00185231 0.000391815"/>
+              <joint name="lowerNeckPitch" pos="0 0 0" axis="0 -1 0" range="-1.162 0"/>
+              <geom type="mesh" mesh="neckj1" rgba="0.99 0.99 0.99 1"/>
+              <body name="neckYawLink" pos="-0.051924 0 0">
+                <inertial pos="-0.03 -0.01 0.15" quat="0.173574 0.706791 0.579589 0.366599" mass="1.4" diaginertia="0.00299118 0.00276837 0.00127783"/>
+                <joint name="neckYaw" pos="0 0 0" axis="0 0 1" range="-1.0472 1.0472"/>
+                <geom type="mesh" mesh="neckj2" rgba="0.99 0.99 0.99 1"/>
+                <body name="upperNeckPitchLink" pos="-0.06 0 0.195997">
+                  <inertial pos="0.102036 0.00422754 0.0409152" quat="0.603288 0.115467 0.162028 0.772307" mass="5.30991" diaginertia="0.0462321 0.0454456 0.0392626"/>
+                  <joint name="upperNeckPitch" pos="0 0 0" axis="0 -1 0" range="0 0.872"/>
+                  <geom type="mesh" mesh="head_multisense" rgba="0.99 0.95 0.85 1"/>
+                  <geom class="reward_collision_sphere" pos="0.1 0 0" size="0.13"/>
+                </body>
+              </body>
+            </body>
+            <body name="rightShoulderPitchLink" pos="-0.0316 0 0.2984">
+              <inertial pos="0.012 -0.251 0" quat="0.5 0.5 -0.5 0.5" mass="2.65" diaginertia="0.0148064 0.0137182 0.0105028"/>
+              <joint name="rightShoulderPitch" pos="0 0 0" axis="0 -1 0" range="-2 2.85"/>
+              <geom type="mesh" mesh="aj1_right" rgba="0.99 0.99 0.99 1"/>
+              <body name="rightShoulderRollLink" pos="0 -0.2499 0">
+                <inertial pos="0.008513 -0.02068 -0.001088" quat="0.525233 0.480774 -0.514554 0.477724" mass="3.97" diaginertia="0.0168494 0.0146528 0.00639708"/>
+                <joint name="rightShoulderRoll" pos="0 0 0" axis="-1 0 0" range="-1.519 1.266"/>
+                <geom type="mesh" mesh="aj2_right" rgba="0.99 0.99 0.99 1"/>
+                <body name="rightShoulderYawLink">
+                  <inertial pos="-0.004304 -0.209832 -0.007295" quat="0.466009 0.602853 -0.415653 0.496625" mass="3.085" diaginertia="0.0421085 0.041026 0.00300598"/>
+                  <joint name="rightShoulderYaw" pos="0 0 0" axis="0 1 0" range="-3.1 2.18"/>
+                  <geom type="mesh" mesh="aj3_right" rgba="0.99 0.99 0.99 1"/>
+                  <geom class="reward_collision_sphere" pos="0 -0.11 0" size="0.08"/>
+                  <body name="rightElbowPitchLink" pos="0.0254 -0.33 0">
+                    <inertial pos="-0.01 -0.13 0.019564" quat="0.554288 0.767757 0.188145 -0.260605" mass="6.03" diaginertia="0.0123133 0.0115163 0.00436298"/>
+                    <joint name="rightElbowPitch" pos="0 0 0" axis="0 0 1" range="-0.12 2.174"/>
+                    <geom type="mesh" mesh="right_elbow_mass_sim" rgba="0.99 0.99 0.99 1"/>
+                    <geom class="reward_collision_sphere" pos="-0.02 0 0" size="0.08"/>
+                    <geom class="reward_collision_sphere" pos="-0.02 -0.2 0" size="0.06"/>
+                    <geom class="reward_collision_sphere" pos="-0.02 -0.36 0" size="0.05"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+            <body name="leftShoulderPitchLink" pos="-0.0316 0 0.2984">
+              <inertial pos="-0.012 0.251 0" quat="0.5 0.5 -0.5 0.5" mass="2.65" diaginertia="0.0148064 0.0137182 0.0105028"/>
+              <joint name="leftShoulderPitch" pos="0 0 0" axis="0 1 0" range="-2.85 2"/>
+              <geom type="mesh" mesh="aj1_left" rgba="0.99 0.99 0.99 1"/>
+              <body name="leftShoulderRollLink" pos="0 0.2499 0">
+                <inertial pos="-0.008513 0.02068 -0.001088" quat="0.514554 0.477724 -0.525233 0.480774" mass="3.97" diaginertia="0.0168494 0.0146528 0.00639708"/>
+                <joint name="leftShoulderRoll" pos="0 0 0" axis="-1 0 0" range="-1.266 1.519"/>
+                <geom type="mesh" mesh="aj2_left" rgba="0.99 0.99 0.99 1"/>
+                <body name="leftShoulderYawLink">
+                  <inertial pos="-0.004304 0.209832 0.007295" quat="0.405027 0.252154 -0.635785 0.606753" mass="3.085" diaginertia="0.0429466 0.0401445 0.00304933"/>
+                  <joint name="leftShoulderYaw" pos="0 0 0" axis="0 -1 0" range="-2.18 3.1"/>
+                  <geom type="mesh" mesh="aj3_left" rgba="0.99 0.99 0.99 1"/>
+                  <geom class="reward_collision_sphere" pos="0 0.11 0" size="0.08"/>
+                  <body name="leftElbowPitchLink" pos="0.0254 0.33 0">
+                    <inertial pos="-0.01 0.13 0.019564" quat="0.767757 0.554288 0.260605 -0.188145" mass="6.03" diaginertia="0.0123133 0.0115163 0.00436298"/>
+                    <joint name="leftElbowPitch" pos="0 0 0" axis="0 0 1" range="-2.174 0.12"/>
+                    <geom type="mesh" mesh="left_elbow_mass_sim" rgba="0.99 0.99 0.99 1"/>
+                    <geom class="reward_collision_sphere" pos="-0.02 0 0" size="0.08"/>
+                    <geom class="reward_collision_sphere" pos="-0.02 0.2 0" size="0.06"/>
+                    <geom class="reward_collision_sphere" pos="-0.02 0.36 0" size="0.05"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="rightHipYawLink" pos="0 -0.1016 -0.1853">
+        <inertial pos="0.02176 0.00131 0.03867" mass="2.39" diaginertia="0.017261 0.0148662 0.0112382"/>
+        <joint name="rightHipYaw" pos="0 0 0" axis="0 0 -1" range="-0.4141 1.1"/>
+        <geom type="mesh" mesh="lj1_right" rgba="0.99 0.99 0.99 1"/>
+        <body name="rightHipRollLink">
+          <inertial pos="0.012959 -0.00755 -0.01595" quat="0.538756 0.452427 0.652394 0.281841" mass="3.665" diaginertia="0.00976028 0.00798554 0.0057989"/>
+          <joint name="rightHipRoll" pos="0 0 0" axis="-1 0 0" range="-0.467 0.5515"/>
+          <body name="rightHipPitchLink" pos="0 0 -0.0609">
+            <inertial pos="0.016691 -0.091397 -0.207875" quat="0.706768 -0.00399553 -0.00802505 0.707388" mass="10.2" diaginertia="0.256905 0.240897 0.0232059"/>
+            <joint name="rightHipPitch" pos="0 0 0" axis="0 -1 0" range="-1.619 2.42"/>
+            <geom type="mesh" mesh="lj3_right" rgba="0.99 0.99 0.99 1"/>
+            <geom class="reward_collision_sphere" pos="0 -0.1 0" size="0.07"/>
+            <geom class="reward_collision_sphere" pos="0.03 -0.1 -0.2" size="0.09"/>
+            <body name="rightKneePitchLink" pos="0.000112225 -0.0361046 -0.430959">
+              <inertial pos="-0.022183 0.001703 -0.189418" quat="0.714791 -0.00130456 -0.00421794 0.699324" mass="6.2" diaginertia="0.0915876 0.086938 0.0140115"/>
+              <joint name="rightKneePitch" pos="0 0 0" axis="0 -1 0" range="-2.057 0.083"/>
+              <geom type="mesh" mesh="lj4_right" rgba="0.99 0.99 0.99 1"/>
+              <geom class="reward_collision_sphere" pos="0 -0.02 0" size="0.1"/>
+              <body name="rightAnklePitchLink" pos="-0.0102381 0 -0.40627">
+                <inertial pos="0 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.03" diaginertia="7.015e-06 4.377e-06 4.322e-06"/>
+                <joint name="rightAnklePitch" pos="0 0 0" axis="0 -1 0" range="-0.65 0.93"/>
+                <geom type="mesh" mesh="lj5" rgba="0.99 0.99 0.99 1"/>
+                <body name="rightFoot">
+                  <inertial pos="0.0369087 0.00494324 -0.0489279" quat="-0.0131747 0.736914 -0.028612 0.675252" mass="2.37" diaginertia="0.0210608 0.0179885 0.00629909"/>
+                  <joint name="rightAnkleRoll" pos="0 0 0" axis="-1 0 0" range="-0.4 0.4"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="foot" rgba="0.99 0.99 0.99 1"/>
+                  <geom name="right_foot" class="foot"/>
+                  <site name="right_foot" class="foot"/>
+                  <geom class="reward_collision_sphere" pos="0.045 0 -0.0559" size="0.085"/>
+                  <geom class="reward_collision_sphere" pos="0.16 0.05 -0.07" size="0.03"/>
+                  <geom class="reward_collision_sphere" pos="-0.07 0.05 -0.07" size="0.03"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="leftHipYawLink" pos="0 0.1016 -0.1853">
+        <inertial pos="0.02176 -0.00131 0.03867" mass="2.39" diaginertia="0.017261 0.0148662 0.0112382"/>
+        <joint name="leftHipYaw" pos="0 0 0" axis="0 0 -1" range="-1.1 0.4141"/>
+        <geom type="mesh" mesh="lj1_left" rgba="0.99 0.99 0.99 1"/>
+        <body name="leftHipRollLink">
+          <inertial pos="0.012959 0.00755 -0.01595" quat="0.281841 0.652394 0.452427 0.538756" mass="3.665" diaginertia="0.00976028 0.00798554 0.0057989"/>
+          <joint name="leftHipRoll" pos="0 0 0" axis="-1 0 0" range="-0.5515 0.467"/>
+          <body name="leftHipPitchLink" pos="0 0 -0.0609">
+            <inertial pos="0.016691 0.091397 -0.207875" quat="0.707388 -0.00802505 -0.00399553 0.706768" mass="10.2" diaginertia="0.256905 0.240897 0.0232059"/>
+            <joint name="leftHipPitch" pos="0 0 0" axis="0 1 0" range="-2.42 1.619"/>
+            <geom type="mesh" mesh="lj3_left" rgba="0.99 0.99 0.99 1"/>
+            <geom class="reward_collision_sphere" pos="0 0.1 0" size="0.07"/>
+            <geom class="reward_collision_sphere" pos="0.03 0.1 -0.2" size="0.09"/>
+            <body name="leftKneePitchLink" pos="0.000112225 0.0361046 -0.430959">
+              <inertial pos="-0.022183 0.001703 -0.189418" quat="0.714791 -0.00130456 -0.00421794 0.699324" mass="6.2" diaginertia="0.0915876 0.086938 0.0140115"/>
+              <joint name="leftKneePitch" pos="0 0 0" axis="0 1 0" range="-0.083 2.057"/>
+              <geom type="mesh" mesh="lj4_left" rgba="0.99 0.99 0.99 1"/>
+              <geom class="reward_collision_sphere" pos="0 0.02 0" size="0.1"/>
+              <body name="leftAnklePitchLink" pos="-0.0102381 0 -0.40627">
+                <inertial pos="0 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.03" diaginertia="7.015e-06 4.377e-06 4.322e-06"/>
+                <joint name="leftAnklePitch" pos="0 0 0" axis="0 1 0" range="-0.93 0.65"/>
+                <geom type="mesh" mesh="lj5" rgba="0.99 0.99 0.99 1"/>
+                <body name="leftFoot">
+                  <inertial pos="0.0369087 0.00494324 -0.0489279" quat="-0.0131747 0.736914 -0.028612 0.675252" mass="2.37" diaginertia="0.0210608 0.0179885 0.00629909"/>
+                  <joint name="leftAnkleRoll" pos="0 0 0" axis="-1 0 0" range="-0.4 0.4"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="foot" rgba="0.99 0.99 0.99 1"/>
+                  <geom name="left_foot" class="foot"/>
+                  <site name="left_foot" class="foot"/>
+                  <geom class="reward_collision_sphere" pos="0.045 0 -0.0559" size="0.085"/>
+                  <geom class="reward_collision_sphere" pos="0.16 -0.05 -0.07" size="0.03"/>
+                  <geom class="reward_collision_sphere" pos="-0.07 -0.05 -0.07" size="0.03"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="left_foot" geom2="floor"/>
+    <pair geom1="right_foot" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="torsoYaw" joint="torsoYaw" forcerange="-190.0 190.0"/>
+    <position name="torsoPitch" joint="torsoPitch" forcerange="-150.0 150.0"/>
+    <position name="torsoRoll" joint="torsoRoll" forcerange="-150.0 150.0"/>
+    <position name="lowerNeckPitch" joint="lowerNeckPitch" forcerange="-26.0 26.0"/>
+    <position name="neckYaw" joint="neckYaw" forcerange="-26.0 26.0"/>
+    <position name="upperNeckPitch" joint="upperNeckPitch" forcerange="-26.0 26.0"/>
+    <position name="rightShoulderPitch" joint="rightShoulderPitch" forcerange="-190.0 190.0"/>
+    <position name="rightShoulderRoll" joint="rightShoulderRoll" forcerange="-190.0 190.0"/>
+    <position name="rightShoulderYaw" joint="rightShoulderYaw" forcerange="-65.0 65.0"/>
+    <position name="rightElbowPitch" joint="rightElbowPitch" forcerange="-65.0 65.0"/>
+    <position name="leftShoulderPitch" joint="leftShoulderPitch" forcerange="-190.0 190.0"/>
+    <position name="leftShoulderRoll" joint="leftShoulderRoll" forcerange="-190.0 190.0"/>
+    <position name="leftShoulderYaw" joint="leftShoulderYaw" forcerange="-65.0 65.0"/>
+    <position name="leftElbowPitch" joint="leftElbowPitch" forcerange="-65.0 65.0"/>
+    <position name="rightHipYaw" joint="rightHipYaw" forcerange="-190.0 190.0"/>
+    <position name="rightHipRoll" joint="rightHipRoll" forcerange="-350.0 350.0"/>
+    <position name="rightHipPitch" joint="rightHipPitch" forcerange="-350.0 350.0"/>
+    <position name="rightKneePitch" joint="rightKneePitch" forcerange="-350.0 350.0"/>
+    <position name="rightAnklePitch" joint="rightAnklePitch" forcerange="-205.0 205.0"/>
+    <position name="rightAnkleRoll" joint="rightAnkleRoll" forcerange="-205.0 205.0"/>
+    <position name="leftHipYaw" joint="leftHipYaw" forcerange="-190.0 190.0"/>
+    <position name="leftHipRoll" joint="leftHipRoll" forcerange="-350.0 350.0"/>
+    <position name="leftHipPitch" joint="leftHipPitch" forcerange="-350.0 350.0"/>
+    <position name="leftKneePitch" joint="leftKneePitch" forcerange="-350.0 350.0"/>
+    <position name="leftAnklePitch" joint="leftAnklePitch" forcerange="-205.0 205.0"/>
+    <position name="leftAnkleRoll" joint="leftAnkleRoll" forcerange="-205.0 205.0"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="left_foot" name="left_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="right_foot" name="right_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 1.102 1 0 0 0
+      0.0 0.0 0.0
+      0.0 0.0 0.0
+      0.0 -1.3 0.0 0.4
+      0.0 1.3 0.0 -0.4
+      0.0 0.0 0.4 -0.8 0.4 0.0
+      0.0 0.0 -0.4 0.8 -0.4 0.0"/>
+  </keyframe>
+</mujoco>

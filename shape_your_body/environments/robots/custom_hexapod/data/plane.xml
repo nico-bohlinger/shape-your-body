@@ -1,0 +1,306 @@
+<mujoco model="hexapod">
+  <compiler angle="radian" assetdir="assets" autolimits="true" balanceinertia="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.01" armature="0.01" frictionloss="0.03"/>
+    <position forcelimited="true" kp="30" kv="0.5"/>
+
+    <default class="foot">
+      <geom size="0.01" solimp="0.015 1 0.01" friction="1.0 0.005 0.0001" priority="1" condim="6" group="4"/>
+    </default>
+
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+
+    <mesh name="base" file="base.stl"/>
+    <mesh name="motor" file="motor.stl"/>
+    <mesh name="leg_0_left" file="leg_0_left.stl"/>
+    <mesh name="leg_1" file="leg_1.stl"/>
+    <mesh name="leg_2_left" file="leg_2_left.stl"/>
+    <mesh name="leg_0_right" file="leg_0_right.stl"/>
+    <mesh name="leg_2_right" file="leg_2_right.stl"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk" pos="0 0 0">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <site name="imu"/>
+
+      <inertial mass="0.53699" pos="0.00372 0.0 0.001" diaginertia="0.01109 0.00244 0.00355"/>
+
+      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="base"/>
+      <geom name="trunk_1" type="mesh" mesh="base"/>
+      <geom pos="0.08 0.043 0.005" quat="0 0.707107 0.707107 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+      <geom name="trunk_2" pos="0.08 0.043 0.005" quat="0 0.707107 0.707107 0" type="mesh" mesh="motor"/>
+      <geom class="reward_collision_sphere" pos="0.08 0.043 0.005" size="0.02"/>
+      <geom pos="0.08 -0.043 0.005" quat="0 0.707107 -0.707107 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+      <geom name="trunk_3" pos="0.08 -0.043 0.005" quat="0 0.707107 -0.707107 0" type="mesh" mesh="motor"/>
+      <geom class="reward_collision_sphere" pos="0.08 -0.043 0.005" size="0.02"/>
+      <geom pos="0 0.06 0.005" quat="0 0.707107 0.707107 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+      <geom name="trunk_4" pos="0 0.06 0.005" quat="0 0.707107 0.707107 0" type="mesh" mesh="motor"/>
+      <geom class="reward_collision_sphere" pos="0 0.06 0.005" size="0.02"/>
+      <geom pos="0 -0.06 0.005" quat="0 0.707107 -0.707107 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+      <geom name="trunk_5" pos="0 -0.06 0.005" quat="0 0.707107 -0.707107 0" type="mesh" mesh="motor"/>
+      <geom class="reward_collision_sphere" pos="0 -0.06 0.005" size="0.02"/>
+      <geom pos="-0.08 0.043 0.005" quat="0 0.707107 0.707107 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+      <geom name="trunk_6" pos="-0.08 0.043 0.005" quat="0 0.707107 0.707107 0" type="mesh" mesh="motor"/>
+      <geom class="reward_collision_sphere" pos="-0.08 0.043 0.005" size="0.02"/>
+      <geom pos="-0.08 -0.043 0.005" quat="0 0.707107 -0.707107 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+      <geom name="trunk_7" pos="-0.08 -0.043 0.005" quat="0 0.707107 -0.707107 0" type="mesh" mesh="motor"/>
+      <geom class="reward_collision_sphere" pos="-0.08 -0.043 0.005" size="0.02"/>
+
+      <camera name="ego_camera" pos="0.121 0 0.014" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="leg_0_link_0" pos="0.08 0.058 -0.014" quat="0.707107 0 0 0.707107">
+        <inertial pos="0.0425743 0.00175467 -0.0105243" quat="0.49494 0.822967 0.238968 0.143717" mass="0.098061" diaginertia="0.0110094 0.0110094 0.011"/>
+        <joint name="leg_0_joint_0" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_0_left"/>
+        <geom name="hip_0" type="mesh" mesh="leg_0_left"/>
+        <geom pos="0.0465 -0.01225 -0.0145" quat="0.707107 0.707107 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+        <geom pos="0.0465 -0.01225 -0.0145" quat="0.707107 0.707107 0 0" type="mesh" mesh="motor"/>
+        <geom class="reward_collision_sphere" pos="0.0465 -0.004 -0.0145" size="0.021"/>
+        <body name="leg_0_link_1" pos="0.062 -0.032 -0.01375" quat="0.707107 0.707107 0 0">
+          <inertial pos="0.0960139 0 -0.00664375" quat="0.446769 0.548086 0.548086 0.446769" mass="0.08807" diaginertia="0.0110678 0.0110678 0.011"/>
+          <joint name="leg_0_joint_1" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_1"/>
+          <geom type="mesh" mesh="leg_1"/>
+          <geom pos="0.1165 0 -0.0032" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+          <geom name="knee_0" pos="0.1165 0 -0.0032" type="mesh" mesh="motor"/>
+          <geom class="reward_collision_sphere" pos="0.05 0 0" size="0.016"/>
+          <geom class="reward_collision_sphere" pos="0.1165 0 -0.012" size="0.021"/>
+          <body name="leg_0_link_2" pos="0.132 0 0.0165">
+            <inertial pos="0.08534 -0.00854 0.00075" mass="0.0467" diaginertia="0.01 0.01 0.01"/>
+            <joint name="leg_0_joint_2" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_2_left"/>
+            <geom type="mesh" mesh="leg_2_left"/>
+            <geom name="foot_0" pos="0.19605 -0.027 0" class="foot"/>
+            <site name="foot_0" pos="0.19605 -0.027 0" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0.1 -0.007 0" size="0.016"/>
+            <geom class="reward_collision_sphere" pos="0.19605 -0.027 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_1_link_0" pos="0.08 -0.058 -0.014" quat="0.707107 0 0 -0.707107">
+        <inertial pos="0.0425743 -0.00175467 -0.0105243" quat="0.822967 0.49494 -0.143717 -0.238968" mass="0.098061" diaginertia="0.0110094 0.0110094 0.011"/>
+        <joint name="leg_1_joint_0" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_0_right"/>
+        <geom name="hip_1" type="mesh" mesh="leg_0_right"/>
+        <geom pos="0.0465 0.01225 -0.0145" quat="0.707107 -0.707107 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+        <geom pos="0.0465 0.01225 -0.0145" quat="0.707107 -0.707107 0 0" type="mesh" mesh="motor"/>
+        <geom class="reward_collision_sphere" pos="0.0465 0.004 -0.0145" size="0.021"/>
+        <body name="leg_1_link_1" pos="0.062 0.032 -0.01375" quat="0.707107 -0.707107 0 0">
+          <inertial pos="0.0960139 0 -0.00664375" quat="0.446769 0.548086 0.548086 0.446769" mass="0.08807" diaginertia="0.0110678 0.0110678 0.011"/>
+          <joint name="leg_1_joint_1" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_1"/>
+          <geom type="mesh" mesh="leg_1"/>
+          <geom pos="0.1165 0 -0.0032" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+          <geom name="knee_1" pos="0.1165 0 -0.0032" type="mesh" mesh="motor"/>
+          <geom class="reward_collision_sphere" pos="0.05 0 0" size="0.016"/>
+          <geom class="reward_collision_sphere" pos="0.1165 0 -0.012" size="0.021"/>
+          <body name="leg_1_link_2" pos="0.132 0 0.0165">
+            <inertial pos="0.08534 0.00854 0.00075" mass="0.0467" diaginertia="0.01 0.01 0.01"/>
+            <joint name="leg_1_joint_2" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_2_right"/>
+            <geom type="mesh" mesh="leg_2_right"/>
+            <geom name="foot_1" pos="0.19605 0.027 0" class="foot"/>
+            <site name="foot_1" pos="0.19605 0.027 0" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0.1 0.007 0" size="0.016"/>
+            <geom class="reward_collision_sphere" pos="0.19605 0.027 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_2_link_0" pos="0 0.075 -0.014" quat="0.707107 0 0 0.707107">
+        <inertial pos="0.0425743 0.00175467 -0.0105243" quat="0.49494 0.822967 0.238968 0.143717" mass="0.098061" diaginertia="0.0110094 0.0110094 0.011"/>
+        <joint name="leg_2_joint_0" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_0_left"/>
+        <geom name="hip_2" type="mesh" mesh="leg_0_left"/>
+        <geom pos="0.0465 -0.01225 -0.0145" quat="0.707107 0.707107 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+        <geom pos="0.0465 -0.01225 -0.0145" quat="0.707107 0.707107 0 0" type="mesh" mesh="motor"/>
+        <geom class="reward_collision_sphere" pos="0.0465 -0.004 -0.0145" size="0.021"/>
+        <body name="leg_2_link_1" pos="0.062 -0.032 -0.01375" quat="0.707107 0.707107 0 0">
+          <inertial pos="0.0960139 0 -0.00664375" quat="0.446769 0.548086 0.548086 0.446769" mass="0.08807" diaginertia="0.0110678 0.0110678 0.011"/>
+          <joint name="leg_2_joint_1" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_1"/>
+          <geom type="mesh" mesh="leg_1"/>
+          <geom pos="0.1165 0 -0.0032" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+          <geom name="knee_2" pos="0.1165 0 -0.0032" type="mesh" mesh="motor"/>
+          <geom class="reward_collision_sphere" pos="0.05 0 0" size="0.016"/>
+          <geom class="reward_collision_sphere" pos="0.1165 0 -0.012" size="0.021"/>
+          <body name="leg_2_link_2" pos="0.132 0 0.0165">
+            <inertial pos="0.08534 -0.00854 0.00075" mass="0.0467" diaginertia="0.01 0.01 0.01"/>
+            <joint name="leg_2_joint_2" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_2_left"/>
+            <geom type="mesh" mesh="leg_2_left"/>
+            <geom name="foot_2" pos="0.19605 -0.027 0" class="foot"/>
+            <site name="foot_2" pos="0.19605 -0.027 0" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0.1 -0.007 0" size="0.016"/>
+            <geom class="reward_collision_sphere" pos="0.19605 -0.027 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_3_link_0" pos="0 -0.075 -0.014" quat="0.707107 0 0 -0.707107">
+        <inertial pos="0.0425743 -0.00175467 -0.0105243" quat="0.822967 0.49494 -0.143717 -0.238968" mass="0.098061" diaginertia="0.0110094 0.0110094 0.011"/>
+        <joint name="leg_3_joint_0" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_0_right"/>
+        <geom name="hip_3" type="mesh" mesh="leg_0_right"/>
+        <geom pos="0.0465 0.01225 -0.0145" quat="0.707107 -0.707107 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+        <geom pos="0.0465 0.01225 -0.0145" quat="0.707107 -0.707107 0 0" type="mesh" mesh="motor"/>
+        <geom class="reward_collision_sphere" pos="0.0465 0.004 -0.0145" size="0.021"/>
+        <body name="leg_3_link_1" pos="0.062 0.032 -0.01375" quat="0.707107 -0.707107 0 0">
+          <inertial pos="0.0960139 0 -0.00664375" quat="0.446769 0.548086 0.548086 0.446769" mass="0.08807" diaginertia="0.0110678 0.0110678 0.011"/>
+          <joint name="leg_3_joint_1" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_1"/>
+          <geom type="mesh" mesh="leg_1"/>
+          <geom pos="0.1165 0 -0.0032" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+          <geom name="knee_3" pos="0.1165 0 -0.0032" type="mesh" mesh="motor"/>
+          <geom class="reward_collision_sphere" pos="0.05 0 0" size="0.016"/>
+          <geom class="reward_collision_sphere" pos="0.1165 0 -0.012" size="0.021"/>
+          <body name="leg_3_link_2" pos="0.132 0 0.0165">
+            <inertial pos="0.08534 0.00854 0.00075" mass="0.0467" diaginertia="0.01 0.01 0.01"/>
+            <joint name="leg_3_joint_2" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_2_right"/>
+            <geom type="mesh" mesh="leg_2_right"/>
+            <geom name="foot_3" pos="0.19605 0.027 0" class="foot"/>
+            <site name="foot_3" pos="0.19605 0.027 0" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0.1 0.007 0" size="0.016"/>
+            <geom class="reward_collision_sphere" pos="0.19605 0.027 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_4_link_0" pos="-0.08 0.058 -0.014" quat="0.707107 0 0 0.707107">
+        <inertial pos="0.0425743 0.00175467 -0.0105243" quat="0.49494 0.822967 0.238968 0.143717" mass="0.098061" diaginertia="0.0110094 0.0110094 0.011"/>
+        <joint name="leg_4_joint_0" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_0_left"/>
+        <geom name="hip_4" type="mesh" mesh="leg_0_left"/>
+        <geom pos="0.0465 -0.01225 -0.0145" quat="0.707107 0.707107 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+        <geom pos="0.0465 -0.01225 -0.0145" quat="0.707107 0.707107 0 0" type="mesh" mesh="motor"/>
+        <geom class="reward_collision_sphere" pos="0.0465 -0.004 -0.0145" size="0.021"/>
+        <body name="leg_4_link_1" pos="0.062 -0.032 -0.01375" quat="0.707107 0.707107 0 0">
+          <inertial pos="0.0960139 0 -0.00664375" quat="0.446769 0.548086 0.548086 0.446769" mass="0.08807" diaginertia="0.0110678 0.0110678 0.011"/>
+          <joint name="leg_4_joint_1" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_1"/>
+          <geom type="mesh" mesh="leg_1"/>
+          <geom pos="0.1165 0 -0.0032" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+          <geom name="knee_4" pos="0.1165 0 -0.0032" type="mesh" mesh="motor"/>
+          <geom class="reward_collision_sphere" pos="0.05 0 0" size="0.016"/>
+          <geom class="reward_collision_sphere" pos="0.1165 0 -0.012" size="0.021"/>
+          <body name="leg_4_link_2" pos="0.132 0 0.0165">
+            <inertial pos="0.08534 -0.00854 0.00075" mass="0.0467" diaginertia="0.01 0.01 0.01"/>
+            <joint name="leg_4_joint_2" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_2_left"/>
+            <geom type="mesh" mesh="leg_2_left"/>
+            <geom name="foot_4" pos="0.19605 -0.027 0" class="foot"/>
+            <site name="foot_4" pos="0.19605 -0.027 0" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0.1 -0.007 0" size="0.016"/>
+            <geom class="reward_collision_sphere" pos="0.19605 -0.027 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_5_link_0" pos="-0.08 -0.058 -0.014" quat="0.707107 0 0 -0.707107">
+        <inertial pos="0.0425743 -0.00175467 -0.0105243" quat="0.822967 0.49494 -0.143717 -0.238968" mass="0.098061" diaginertia="0.0110094 0.0110094 0.011"/>
+        <joint name="leg_5_joint_0" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_0_right"/>
+        <geom name="hip_5" type="mesh" mesh="leg_0_right"/>
+        <geom pos="0.0465 0.01225 -0.0145" quat="0.707107 -0.707107 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+        <geom pos="0.0465 0.01225 -0.0145" quat="0.707107 -0.707107 0 0" type="mesh" mesh="motor"/>
+        <geom class="reward_collision_sphere" pos="0.0465 0.004 -0.0145" size="0.021"/>
+        <body name="leg_5_link_1" pos="0.062 0.032 -0.01375" quat="0.707107 -0.707107 0 0">
+          <inertial pos="0.0960139 0 -0.00664375" quat="0.446769 0.548086 0.548086 0.446769" mass="0.08807" diaginertia="0.0110678 0.0110678 0.011"/>
+          <joint name="leg_5_joint_1" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_1"/>
+          <geom type="mesh" mesh="leg_1"/>
+          <geom pos="0.1165 0 -0.0032" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="motor"/>
+          <geom name="knee_5" pos="0.1165 0 -0.0032" type="mesh" mesh="motor"/>
+          <geom class="reward_collision_sphere" pos="0.05 0 0" size="0.016"/>
+          <geom class="reward_collision_sphere" pos="0.1165 0 -0.012" size="0.021"/>
+          <body name="leg_5_link_2" pos="0.132 0 0.0165">
+            <inertial pos="0.08534 0.00854 0.00075" mass="0.0467" diaginertia="0.01 0.01 0.01"/>
+            <joint name="leg_5_joint_2" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="leg_2_right"/>
+            <geom type="mesh" mesh="leg_2_right"/>
+            <geom name="foot_5" pos="0.19605 0.027 0" class="foot"/>
+            <site name="foot_5" pos="0.19605 0.027 0" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0.1 0.007 0" size="0.016"/>
+            <geom class="reward_collision_sphere" pos="0.19605 0.027 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="foot_0" geom2="floor"/>
+    <pair geom1="foot_1" geom2="floor"/>
+    <pair geom1="foot_2" geom2="floor"/>
+    <pair geom1="foot_3" geom2="floor"/>
+    <pair geom1="foot_4" geom2="floor"/>
+    <pair geom1="foot_5" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="leg_0_joint_0" joint="leg_0_joint_0" forcerange="-1.96133 1.96133"/>
+    <position name="leg_0_joint_1" joint="leg_0_joint_1" forcerange="-1.96133 1.96133"/>
+    <position name="leg_0_joint_2" joint="leg_0_joint_2" forcerange="-1.96133 1.96133"/>
+    <position name="leg_1_joint_0" joint="leg_1_joint_0" forcerange="-1.96133 1.96133"/>
+    <position name="leg_1_joint_1" joint="leg_1_joint_1" forcerange="-1.96133 1.96133"/>
+    <position name="leg_1_joint_2" joint="leg_1_joint_2" forcerange="-1.96133 1.96133"/>
+    <position name="leg_2_joint_0" joint="leg_2_joint_0" forcerange="-1.96133 1.96133"/>
+    <position name="leg_2_joint_1" joint="leg_2_joint_1" forcerange="-1.96133 1.96133"/>
+    <position name="leg_2_joint_2" joint="leg_2_joint_2" forcerange="-1.96133 1.96133"/>
+    <position name="leg_3_joint_0" joint="leg_3_joint_0" forcerange="-1.96133 1.96133"/>
+    <position name="leg_3_joint_1" joint="leg_3_joint_1" forcerange="-1.96133 1.96133"/>
+    <position name="leg_3_joint_2" joint="leg_3_joint_2" forcerange="-1.96133 1.96133"/>
+    <position name="leg_4_joint_0" joint="leg_4_joint_0" forcerange="-1.96133 1.96133"/>
+    <position name="leg_4_joint_1" joint="leg_4_joint_1" forcerange="-1.96133 1.96133"/>
+    <position name="leg_4_joint_2" joint="leg_4_joint_2" forcerange="-1.96133 1.96133"/>
+    <position name="leg_5_joint_0" joint="leg_5_joint_0" forcerange="-1.96133 1.96133"/>
+    <position name="leg_5_joint_1" joint="leg_5_joint_1" forcerange="-1.96133 1.96133"/>
+    <position name="leg_5_joint_2" joint="leg_5_joint_2" forcerange="-1.96133 1.96133"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_0" name="foot_0_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_1" name="foot_1_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_2" name="foot_2_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_3" name="foot_3_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_4" name="foot_4_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="foot_5" name="foot_5_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.161 1 0 0 0
+      0.7 -0.6 2.0
+      -0.7 0.6 -2.0
+      0.0 -0.6 2.0
+      0.0 0.6 -2.0
+      -0.7 -0.6 2.0
+      0.7 0.6 -2.0"/>
+  </keyframe>
+</mujoco>

@@ -1,0 +1,217 @@
+<mujoco model="berkeley_humanoid">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.01"/>
+    <position forcelimited="true" kp="20" kv="0.6"/>
+
+    <default class="berkeley_humanoid">
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" density="0" group="2" material="metal"/>
+      </default>
+      <default class="collision">
+        <geom group="3"/>
+      </default>
+
+      <default class="foot">
+        <geom type="box" size="0.08 0.0275 0.006" solimp="0.015 1 0.006" pos="0 -0.0429038 0.0133277" priority="1" condim="6" friction="0.8 0.02 0.01" group="4"/>
+        <site pos="0 -0.0429038 0.0133277"/>
+      </default>
+
+      <default class="reward_collision_sphere">
+        <geom group="5" rgba="1 0 0 1"/>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <mesh file="torso.stl"/>
+    <mesh file="ll_hr.stl"/>
+    <mesh file="ll_haa.stl"/>
+    <mesh file="ll_hfe.stl"/>
+    <mesh file="ll_kfe.stl"/>
+    <mesh file="ll_ffe.stl"/>
+    <mesh file="ll_faa.stl"/>
+    <mesh file="lr_hr.stl"/>
+    <mesh file="lr_haa.stl"/>
+    <mesh file="lr_hfe.stl"/>
+    <mesh file="lr_kfe.stl"/>
+    <mesh file="lr_ffe.stl"/>
+    <mesh file="lr_faa.stl"/>
+    <material name="metal" rgba=".3 .3 .3 1"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk" childclass="berkeley_humanoid" pos="0 0 0">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <site name="imu" pos="0 0 0"/>
+
+      <inertial pos="0.0123294 -0.0023557 0.114047" quat="0.997324 0.0100377 0.00560983 -0.0721951" mass="5.37812"
+        diaginertia="0.0900564 0.0815619 0.0530251"/>
+
+      <geom class="visual" mesh="torso"/>
+      <geom class="collision" size="0.09 0.125 0.125" pos="0.02 0 0.12" type="box"/>
+      <geom class="reward_collision_sphere" pos="0.02 0 0.12" size="0.16"/>
+
+      <camera name="ego_camera" pos="0.092 0 0.277" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="ll_hr" pos="0 0.07 0" quat="0.92388 0 0.382683 0">
+        <inertial pos="-0.00717501 0.000638 -0.0603296" quat="0.997785 0.00699266 0.066053 0.00374607" mass="0.797"
+          diaginertia="0.00165598 0.00124847 0.000774206"/>
+        <joint name="LL_HR" armature="0.0056" frictionloss="0.3" range="-0.610865 0.610865" axis="0 0 -1"/>
+        <geom pos="0 -0.07 0" quat="0.92388 0 -0.382683 0" class="visual" mesh="ll_hr"/>
+        <body name="ll_haa" pos="0.0158 0 -0.065" quat="1 0 -1 0">
+          <inertial pos="0.000606614 -0.009735 -0.0611092" quat="0.702991 -0.06137 0.0554512 0.706373" mass="0.897"
+            diaginertia="0.0018904 0.0014613 0.000923049"/>
+          <joint name="LL_HAA" armature="0.0056" frictionloss="0.3" range="-0.610865 0.610865" axis="0 0 -1"/>
+          <geom pos="0.065 -0.07 0.0158" quat="0.92388 0 0.382683 0" class="visual" mesh="ll_haa"/>
+          <geom class="collision" size="0.055 0.025" pos="6.77985e-05 -0.015 -0.0649318"
+            quat="0.653281 0.653281 0.270598 -0.270598" type="cylinder"/>
+          <body name="ll_hfe" pos="0 0.0158 -0.065" quat="0.653281 -0.653281 -0.270598 -0.270598">
+            <inertial pos="-0.0596998 -0.000999287 0.045473" quat="-0.00572221 0.744789 -0.0182535 0.667026"
+              mass="2.689" diaginertia="0.0191406 0.0181903 0.00583016"/>
+            <joint name="LL_HFE" armature="0.007614" frictionloss="0.3" range="-1.74533 0.523599" axis="0 0 1"/>
+            <geom pos="0.103096 -0.0111723 -0.0858" quat="0.5 0.5 0.5 0.5" class="visual" mesh="ll_hfe"/>
+            <geom class="collision" size="0.0615 0.045" pos="9.61687e-05 -2.87143e-07 0.0542" quat="0 -1 -1 0"
+              type="cylinder"/>
+            <geom class="collision" size="0.052 0.04" pos="-0.114904 -2.87143e-07 0.0592" quat="0 -1 -1 0"
+              type="cylinder"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.075"/>
+            <body name="ll_kfe" pos="-0.22 0 0.0742" quat="1 0 0 0">
+              <inertial pos="-0.0856948 -0.00928029 -0.002232" quat="-0.11773 0.702823 -0.0559586 0.69932" mass="0.35"
+                diaginertia="0.00161117 0.00159463 9.70556e-05"/>
+              <joint name="LL_KFE" armature="0.0056" frictionloss="1.0" range="0 2.0944" axis="0 0 1"/>
+              <geom pos="0.323096 -0.0111723 -0.16" quat="0.5 0.5 0.5 0.5" class="visual" mesh="ll_kfe"/>
+              <geom class="collision" size="0.015 0.02 0.08" pos="-0.0569038 -0.00117229 0" quat="0.5 0.5 0.5 0.5"
+                type="box"/>
+              <geom class="reward_collision_sphere" pos="0 0 0" size="0.04"/>
+              <body name="ll_ffe" pos="-0.18 0 0">
+                <inertial pos="-0.00107817 0.0237707 6.8e-05" quat="0.553259 0.458091 -0.532546 0.447717"
+                  mass="0.0993228" diaginertia="8.20308e-05 7.84322e-05 9.34827e-06"/>
+                <joint name="LL_FFE" armature="0.0056" frictionloss="1.0" range="-0.523599 0.698132" axis="0 0 1"/>
+                <geom pos="0.503096 -0.0111723 -0.16" quat="0.5 0.5 0.5 0.5" class="visual" mesh="ll_ffe"/>
+                <body name="ll_faa" pos="0 0.0175 0" quat="0.5 -0.5 -0.5 -0.5">
+                  <inertial pos="-2.9e-05 -0.0163978 0.0153387" quat="0.985258 -0.171058 -0.00255986 0.000455342"
+                    mass="0.507" diaginertia="0.00109422 0.000978734 0.000375399"/>
+                  <joint name="LL_FAA" armature="0.0004941" frictionloss="0.1" range="-0.523599 0.523599" axis="0 0 -1"/>
+                  <geom pos="-0.16 0.503096 -0.0286723" quat="0.5 -0.5 -0.5 -0.5" class="visual" mesh="ll_faa"/>
+                  <geom name="left_foot" class="foot" quat="0.45452 -0.541675 -0.541675 -0.45452"/>
+                  <site name="left_foot" class="foot" quat="0.45452 -0.541675 -0.541675 -0.45452"/>
+                  <geom class="reward_collision_sphere" pos="0 -0.0429038 0.0133277" size="0.03"/>
+                  <geom class="reward_collision_sphere" pos="-0.014 -0.0329038 0.07" size="0.015"/>
+                  <geom class="reward_collision_sphere" pos="-0.014 -0.0529038 -0.04" size="0.015"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="lr_hr" pos="0 -0.07 0" quat="0.92388 0 0.382683 0">
+        <inertial pos="-0.00717501 -0.000638 -0.0603296" quat="0.997804 -0.00433689 0.066057 0.0019766" mass="0.797"
+          diaginertia="0.00165632 0.00124845 0.000774613"/>
+        <joint name="LR_HR" armature="0.0056" frictionloss="0.3" range="-0.610865 0.610865" axis="0 0 -1"/>
+        <geom pos="0 0.07 0" quat="0.92388 0 -0.382683 0" class="visual" mesh="lr_hr"/>
+        <body name="lr_haa" pos="0.0158 0 -0.065" quat="1 0 -1 0">
+          <inertial pos="0.000606614 0.009735 -0.0611092" quat="0.704792 0.0582267 -0.0597566 0.704491" mass="0.897"
+            diaginertia="0.00189204 0.00146613 0.000918492"/>
+          <joint name="LR_HAA" armature="0.0056" frictionloss="0.3" range="-0.610865 0.610865" axis="0 0 -1"/>
+          <geom pos="0.065 0.07 0.0158" quat="0.92388 0 0.382683 0" class="visual" mesh="lr_haa"/>
+          <geom class="collision" size="0.055 0.025" pos="6.77985e-05 0.015 -0.0649318"
+            quat="0.653281 0.653281 0.270598 -0.270598" type="cylinder"/>
+          <body name="lr_hfe" pos="0 -0.0158 -0.065" quat="0.653281 -0.653281 -0.270598 -0.270598">
+            <inertial pos="-0.0596998 -0.000999287 -0.045473" quat="0.018407 0.667006 0.00579507 0.744802" mass="2.689"
+              diaginertia="0.0191386 0.0181883 0.00582996"/>
+            <joint name="LR_HFE" armature="0.007614" frictionloss="0.3" range="-0.523599 1.74533" axis="0 0 -1"/>
+            <geom pos="0.103096 -0.0111723 0.0858" quat="0.5 0.5 0.5 0.5" class="visual" mesh="lr_hfe"/>
+            <geom class="collision" size="0.0615 0.045" pos="9.61687e-05 -2.87143e-07 -0.0542" quat="0 -1 -1 0"
+              type="cylinder"/>
+            <geom class="collision" size="0.052 0.04" pos="-0.114904 -2.87143e-07 -0.0592" quat="0 -1 -1 0"
+              type="cylinder"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.075"/>
+            <body name="lr_kfe" pos="-0.22 0 -0.0742" quat="1 0 0 0">
+              <inertial pos="-0.0856948 -0.00928029 0.002232" quat="0.055958 0.69932 0.11773 0.702823" mass="0.35"
+                diaginertia="0.00161117 0.00159463 9.70556e-05"/>
+              <joint name="LR_KFE" armature="0.0056" frictionloss="1.0" range="-2.0944 0" axis="0 0 -1"/>
+              <geom pos="0.323096 -0.0111723 0.16" quat="0.5 0.5 0.5 0.5" class="visual" mesh="lr_kfe"/>
+              <geom class="collision" size="0.015 0.02 0.08" pos="-0.0569038 -0.00117229 0" quat="0.5 0.5 0.5 0.5"
+                type="box"/>
+              <geom class="reward_collision_sphere" pos="0 0 0" size="0.04"/>
+              <body name="lr_ffe" pos="-0.18 0 0" quat="1 0 0 0">
+                <inertial pos="-0.00107817 0.0237707 -6.8e-05" quat="0.532548 0.447721 -0.553256 0.45809"
+                  mass="0.0993223" diaginertia="8.20306e-05 7.84321e-05 9.34825e-06"/>
+                <joint name="LR_FFE" armature="0.0056" frictionloss="1.0" range="-0.698132 0.523599" axis="0 0 -1"/>
+                <geom pos="0.503096 -0.0111723 0.16" quat="0.5 0.5 0.5 0.5" class="visual" mesh="lr_ffe"/>
+                <body name="lr_faa" pos="0 0.0175 0" quat="0.5 -0.5 -0.5 -0.5">
+                  <inertial pos="2.9e-05 -0.0163368 0.0153387" quat="0.985231 -0.171209 0.00251902 -0.000808065"
+                    mass="0.507" diaginertia="0.00109488 0.000978788 0.000376011"/>
+                  <joint name="LR_FAA" armature="0.0004941" frictionloss="0.1" range="-0.523599 0.523599" axis="0 0 -1"/>
+                  <geom pos="0.16 0.503096 -0.0286723" quat="0.5 -0.5 -0.5 -0.5" class="visual" mesh="lr_faa"/>
+                  <geom name="right_foot" class="foot" quat="-0.45452 0.541675 0.541675 0.45452"/>
+                  <site name="right_foot" class="foot" quat="-0.45452 0.541675 0.541675 0.45452"/>
+                  <geom class="reward_collision_sphere" pos="0 -0.0429038 0.0133277" size="0.03"/>
+                  <geom class="reward_collision_sphere" pos="0.014 -0.0329038 0.07" size="0.015"/>
+                  <geom class="reward_collision_sphere" pos="0.014 -0.0529038 -0.04" size="0.015"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="left_foot" geom2="floor"/>
+    <pair geom1="right_foot" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="LL_HR" joint="LL_HR" forcerange="-20 20"/>
+    <position name="LL_HAA" joint="LL_HAA" forcerange="-20 20"/>
+    <position name="LL_HFE" joint="LL_HFE" forcerange="-30 30"/>
+    <position name="LL_KFE" joint="LL_KFE" forcerange="-30 30"/>
+    <position name="LL_FFE" joint="LL_FFE" forcerange="-20 20"/>
+    <position name="LL_FAA" joint="LL_FAA" forcerange="-5 5"/>
+    <position name="LR_HR" joint="LR_HR" forcerange="-20 20"/>
+    <position name="LR_HAA" joint="LR_HAA" forcerange="-20 20"/>
+    <position name="LR_HFE" joint="LR_HFE" forcerange="-30 30"/>
+    <position name="LR_KFE" joint="LR_KFE" forcerange="-30 30"/>
+    <position name="LR_FFE" joint="LR_FFE" forcerange="-20 20"/>
+    <position name="LR_FAA" joint="LR_FAA" forcerange="-5 5"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="left_foot" name="left_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="right_foot" name="right_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.5252 1 0 0 0
+      0 0 -0.4 0.8 -0.225 0
+      0 0 0.4 -0.8 0.225 0"/>
+  </keyframe>
+</mujoco>

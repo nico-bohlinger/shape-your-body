@@ -1,0 +1,227 @@
+<mujoco model="Aibo">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.01" frictionloss="0.1" armature="0.01"/>
+    <position forcelimited="true" kp="20" kv="0.5"/>
+
+    <default class="foot">
+      <geom type="sphere" size="0.015" solimp="0.015 1 0.015" priority="1" condim="6" friction="1.0 0.005 0.0001" group="4"/>
+      <site/>
+    </default>
+
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <mesh name="body1" file="body1.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="RFup" file="RFup.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="RFdown" file="RFdown.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="LFup" file="LFup.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="LFdown" file="LFdown.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="RBup" file="RBup.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="RBdown" file="RBdown.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="LBup" file="LBup.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="LBdown" file="LBdown.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="head" file="head.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="RFpaw" file="RFpaw.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="LFpaw" file="LFpaw.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="RBpaw" file="RBpaw.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="LBpaw" file="LBpaw.stl" scale="0.13 0.13 0.13"/>
+    <mesh name="tail" file="tail.stl" scale="0.13 0.13 0.13"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint name="freejoint"/>
+
+      <site name="imu" pos="0 0 0.15"/>
+
+      <inertial pos="0 0 0.15" mass="0.613" diaginertia="0.002475011189860075 0.007506640782378954 0.007113701431115992"/>
+
+      <geom name="visual" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="body1"/>
+      <geom class="reward_collision_sphere" pos="0.068 0 0.155" size="0.055"/>
+      <geom class="reward_collision_sphere" pos="-0.068 0 0.155" size="0.055"/>
+
+      <camera name="ego_camera" pos="0.139 0 0.27" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="RF_up_leg_rot_y" pos="0.061 -0.05 0.162" quat="0.70710678 0.0 0.0 -0.70710678">
+        <inertial pos="-0.001888 -0.002933 0.008598" quat="0.707107 0 0 0.707107" mass="0.05" diaginertia="8.19969e-05 4.44244e-05 3.93385e-05"/>
+        <joint name="legRF1" axis="1 0 0" range="-2.09 2.36"/>
+        <geom size="0.005" quat="0.707141 0 0 -0.707073" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1"/>
+        <body name="RF_up_leg_rot_x">
+          <inertial pos="0.000343 -0.001992 -0.011436" mass="0.073" diaginertia="0.000119697 0.000117945 2.93666e-05"/>
+          <joint name="legRF2" axis="0 1 0" range="-1.58825 0.15708"/>
+          <geom pos="-0.05 -0.061 -0.162" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="RFup"/>
+          <body name="RF_down_leg" pos="0.022 0 -0.077" quat="0.967663 -0.252245 0 0">
+            <inertial pos="-0.00425286 1.14337e-05 0.00697173" quat="0.999998 -6.67343e-06 -0.00219639 0.000166894" mass="0.083" diaginertia="0.000169431 0.000167865 7.84323e-05"/>
+            <joint name="legRF3" axis="1 0 0" range="-0.506 2.0768"/>
+            <geom pos="-0.072 -0.061 -0.085" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="RFdown"/>
+            <geom pos="-0.071 -0.062 -0.083" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1" mesh="RFpaw"/>
+            <geom name="RF_foot" class="foot" pos="0.0 0.0395 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <site name="RF_foot" class="foot" pos="0.0 0.0395 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.025"/>
+            <geom class="reward_collision_sphere" pos="0.0 0.0395 -0.0685" size="0.025"/>
+          </body>
+        </body>
+      </body>
+      <body name="LF_up_leg_rot_y" pos="0.061 0.05 0.162" quat="0.70710678 0.0 0.0 -0.70710678">
+        <inertial pos="-0.001888 0.002933 0.008598" quat="0.5 0.5 0.5 0.5" mass="0.05" diaginertia="8.4078e-05 4.5253e-05 4.07077e-05"/>
+        <joint name="legLF1" axis="-1 0 0" range="-2.36 2.094"/>
+        <geom size="0.005" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1"/>
+        <body name="LF_up_leg_rot_x">
+          <inertial pos="0.000343 0.001992 -0.011436" mass="0.073" diaginertia="0.000115662 0.000114318 2.8949e-05"/>
+          <joint name="legLF2" axis="0 1 0" range="-0.15708 1.58825"/>
+          <geom pos="0.05 -0.061 -0.162" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="LFup"/>
+          <body name="LF_down_leg" pos="-0.022 0 -0.077" quat="0.967663 -0.252245 0 0">
+            <inertial pos="-0.00425286 -1.14337e-05 0.00697173" quat="0.999998 6.67343e-06 -0.00219639 -0.000166894" mass="0.083" diaginertia="0.000169431 0.000167865 7.84323e-05"/>
+            <joint name="legLF3" axis="-1 0 0" range="-2.0768 0.506"/>
+            <geom pos="0.072 -0.061 -0.085" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="LFdown"/>
+            <geom pos="0.071 -0.062 -0.083" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1" mesh="LFpaw"/>
+            <geom name="LF_foot" class="foot" pos="0.0 0.0395 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <site name="LF_foot" class="foot" pos="0.0 0.0395 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.025"/>
+            <geom class="reward_collision_sphere" pos="0.0 0.0395 -0.0685" size="0.025"/>
+          </body>
+        </body>
+      </body>
+      <body name="RB_up_leg_rot_y" pos="-0.068 -0.05 0.162" quat="0.70710678 0.0 0.0 -0.70710678">
+        <inertial pos="0.003468 -0.001798 -0.009007" quat="0.5 0.5 0.5 0.5" mass="0.05" diaginertia="4.68833e-05 2.61584e-05 2.13278e-05"/>
+        <joint name="legRB1" axis="1 0 0" range="-2.094 2.3387"/>
+        <geom size="0.005" quat="0.707141 0 0 -0.707073" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1"/>
+        <body name="RB_up_leg_rot_x">
+          <inertial pos="9e-06 -0.002377 -0.010723" mass="0.073" diaginertia="0.000117943 0.000117596 2.99438e-05"/>
+          <joint name="legRB2" axis="0 -1 0" range="-0.15708 1.58825"/>
+          <geom pos="-0.05 0.068 -0.162" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="RBup"/>
+          <body name="RB_down_leg" pos="0.022 0 -0.079" quat="0.967663 0.252245 0 0">
+            <inertial pos="-0.00291159 0 -0.00619729" quat="0.707105 0.0013922 0.0013922 0.707105" mass="0.083" diaginertia="0.000167738 0.000153004 0.000117608"/>
+            <joint name="legRB3" axis="1 0 0" range="-2.0768 0.506"/>
+            <geom pos="-0.072 0.0655 -0.081" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="RBdown"/>
+            <geom pos="-0.071 0.066 -0.083" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1" mesh="RBpaw"/>
+            <geom name="RB_foot" class="foot" pos="0.0 -0.029 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <site name="RB_foot" class="foot" pos="0.0 -0.029 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.025"/>
+            <geom class="reward_collision_sphere" pos="0.0 -0.029 -0.0685" size="0.025"/>
+          </body>
+        </body>
+      </body>
+      <body name="LB_up_leg_rot_y" pos="-0.068 0.05 0.162" quat="0.70710678 0.0 0.0 -0.70710678">
+        <inertial pos="0.003468 0.001798 -0.009007" quat="0.5 0.5 0.5 0.5" mass="0.05" diaginertia="4.70686e-05 2.55456e-05 2.21195e-05"/>
+        <joint name="legLB1" axis="-1 0 0" range="-2.094 2.3387"/>
+        <geom size="0.005" quat="0.707141 0 0 -0.707073" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1"/>
+        <body name="LB_up_leg_rot_x">
+          <inertial pos="9e-06 0.002377 -0.010723" mass="0.073" diaginertia="0.000115605 0.000115461 3.01475e-05"/>
+          <joint name="legLB2" axis="0 -1 0" range="-1.58825 0.15708"/>
+          <geom pos="0.05 0.068 -0.162" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="LBup"/>
+          <body name="LB_down_leg" pos="-0.022 0 -0.079" quat="0.967663 0.252245 0 0">
+            <inertial pos="-0.00291159 0 -0.00619729" quat="0.707105 0.0013922 0.0013922 0.707105" mass="0.083" diaginertia="0.000167738 0.000153004 0.000117608"/>
+            <joint name="legLB3" axis="-1 0 0" range="-0.506 2.0768"/>
+            <geom pos="0.072 0.0655 -0.081" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="LBdown"/>
+            <geom pos="0.071 0.066 -0.083" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1" mesh="LBpaw"/>
+            <geom name="LB_foot" class="foot" pos="0.0 -0.029 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <site name="LB_foot" class="foot" pos="0.0 -0.029 -0.0685" quat="0.7071068 0 0 0.7071068"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.025"/>
+            <geom class="reward_collision_sphere" pos="0.0 -0.029 -0.0685" size="0.025"/>
+          </body>
+        </body>
+      </body>
+      <body name="neck_link" pos="0.065 0.0 0.164" quat="0.70710678 0.0 0.0 -0.70710678">
+        <inertial pos="-0.000341 0 -0.008011" mass="0.015" diaginertia="1.97e-06 1.97e-06 1.688e-06"/>
+        <joint name="neck" axis="1 0 0" range="-1.3788 0.0349"/>
+        <geom size="0.013 0.045" pos="0 0 0.04" type="cylinder" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1"/>
+        <body name="pan" pos="0 0 0.09">
+          <inertial pos="0 0 0" mass="0.01" diaginertia="8.72e-06 8.72e-06 8.72e-06"/>
+          <joint name="headPan" axis="0 0 1" range="-1.5882 1.5882"/>
+          <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1"/>
+          <body name="head">
+            <inertial pos="0.01 -1e-06 0" quat="0.5 0.5 0.5 0.5" mass="0.19" diaginertia="0.000680251 0.000680043 0.000356225"/>
+            <joint name="headTilt" axis="1 0 0" range="-0.28 0.77"/>
+            <geom pos="0 -0.094 -0.235" quat="0.707141 0 0 -0.707073" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="head"/>
+            <geom class="reward_collision_sphere" pos="0 0.05 0.01" size="0.035"/>
+          </body>
+        </body>
+      </body>
+      <body name="tail1" pos="-0.11 0.0 0.185" quat="0.50002404  0.49997596 -0.49997596 -0.50002404">
+        <inertial pos="0 0 0" quat="0.5 0.5 0.5 0.5" mass="0.01" diaginertia="3.64e-09 3.64e-09 6.126e-10"/>
+        <joint name="tailTilt" axis="1 0 0" range="-1.1 0.03"/>
+        <geom size="0.006 0.01" pos="0 0 0.01" quat="0.707141 0 0 -0.707073" type="cylinder" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1"/>
+        <body name="tail2">
+          <inertial pos="-0.008924 2e-06 0.006188" quat="0.707107 0 0 0.707107" mass="0.01" diaginertia="1.45469e-07 1.32379e-07 3.95881e-08"/>
+          <joint name="tailPan" axis="0 0 1" range="-1.03 1.03"/>
+          <geom pos="0 -0.155 -0.12" quat="0.500048 -0.499952 -0.5 -0.5" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1" mesh="tail"/>
+          <geom class="reward_collision_sphere" pos="0 0.0 0.02" size="0.012"/>
+          <geom class="reward_collision_sphere" pos="0 0.084 0.005" size="0.012"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="RF_foot" geom2="floor"/>
+    <pair geom1="LF_foot" geom2="floor"/>
+    <pair geom1="RB_foot" geom2="floor"/>
+    <pair geom1="LB_foot" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="legRF1" joint="legRF1" forcerange="-3 3"/>  <!-- Best guess -->
+    <position name="legRF2" joint="legRF2" forcerange="-3 3"/>
+    <position name="legRF3" joint="legRF3" forcerange="-3 3"/>
+    <position name="legLF1" joint="legLF1" forcerange="-3 3"/>
+    <position name="legLF2" joint="legLF2" forcerange="-3 3"/>
+    <position name="legLF3" joint="legLF3" forcerange="-3 3"/>
+    <position name="legRB1" joint="legRB1" forcerange="-3 3"/>
+    <position name="legRB2" joint="legRB2" forcerange="-3 3"/>
+    <position name="legRB3" joint="legRB3" forcerange="-3 3"/>
+    <position name="legLB1" joint="legLB1" forcerange="-3 3"/>
+    <position name="legLB2" joint="legLB2" forcerange="-3 3"/>
+    <position name="legLB3" joint="legLB3" forcerange="-3 3"/>
+    <position name="neck" joint="neck" forcerange="-3 3"/>
+    <position name="headPan" joint="headPan" forcerange="-3 3"/>
+    <position name="headTilt" joint="headTilt" forcerange="-3 3"/>
+    <position name="tailTilt" joint="tailTilt" forcerange="-3 3"/>
+    <position name="tailPan" joint="tailPan" forcerange="-3 3"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="RF_foot" name="RF_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="LF_foot" name="LF_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RB_foot" name="RB_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="LB_foot" name="LB_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.0031 1 0 0 0
+      -0.2 -0.05 0.5
+      0.2 0.05 -0.5
+      -0.2 0.05 0.2
+      0.2 -0.05 -0.2
+      -0.5 0.0 0.0
+      -0.3 0.0"/>
+  </keyframe>
+</mujoco>

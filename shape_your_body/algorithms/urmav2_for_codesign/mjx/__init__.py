@@ -1,0 +1,8 @@
+from rl_x.algorithms.algorithm_manager import extract_algorithm_name_from_file, register_algorithm
+from shape_your_body.algorithms.urmav2_for_codesign.mjx.urmav2_for_codesign import URMAv2ForCodesign
+from shape_your_body.algorithms.urmav2_for_codesign.mjx.default_config import get_config
+from shape_your_body.algorithms.urmav2_for_codesign.mjx.general_properties import GeneralProperties
+
+
+URMAV2_FOR_CODESIGN_MJX = extract_algorithm_name_from_file(__file__)
+register_algorithm(URMAV2_FOR_CODESIGN_MJX, get_config, URMAv2ForCodesign, GeneralProperties)

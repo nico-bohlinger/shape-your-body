@@ -1,0 +1,233 @@
+<mujoco model="spot">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.01" frictionloss="0.1" armature="0.01"/> <!-- Best guess from anymal -->
+    <position forcelimited="true" kp="80" kv="2.0"/>
+
+    <default class="spot">
+      <default class="visual">
+        <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+      </default>
+      <default class="collision">
+        <geom group="3" type="mesh"/>
+      </default>
+    </default>
+
+    <default class="foot">
+      <geom type="sphere" size="0.036" solimp="0.015 1 0.036" pos="0 0 -0.3365" priority="1" condim="6" friction="0.8 0.02 0.01" group="4"/>
+      <site pos="0 0 -0.3365"/>
+    </default>
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <mesh file="body_0.obj"/>
+    <mesh file="body_1.obj"/>
+    <mesh file="front_left_hip.obj"/>
+    <mesh file="front_left_upper_leg_0.obj"/>
+    <mesh file="front_left_upper_leg_1.obj"/>
+    <mesh file="front_left_lower_leg.obj"/>
+    <mesh file="front_right_hip.obj"/>
+    <mesh file="front_right_upper_leg_0.obj"/>
+    <mesh file="front_right_upper_leg_1.obj"/>
+    <mesh file="front_right_lower_leg.obj"/>
+    <mesh file="rear_left_hip.obj"/>
+    <mesh file="rear_left_upper_leg_0.obj"/>
+    <mesh file="rear_left_upper_leg_1.obj"/>
+    <mesh file="rear_left_lower_leg.obj"/>
+    <mesh file="rear_right_hip.obj"/>
+    <mesh file="rear_right_upper_leg_0.obj"/>
+    <mesh file="rear_right_upper_leg_1.obj"/>
+    <mesh file="rear_right_lower_leg.obj"/>
+    <mesh file="body_collision.obj"/>
+    <mesh file="left_upper_leg_collision.obj"/>
+    <mesh file="left_lower_leg_collision.obj"/>
+    <mesh file="right_upper_leg_collision.obj"/>
+    <mesh file="right_lower_leg_collision.obj"/>
+    <material name="BlackAbs" rgba="0.1 0.1 0.1 1"/>
+    <material name="wrap" rgba="0.878431 0.666666 0.227450 1"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk" childclass="spot" pos="0 0 0">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint name="freejoint"/>
+
+      <site name="imu" pos="0 0 0"/>
+
+      <inertial pos="0.0063944 -9.81216e-05 0.000911379" mass="32.86" diaginertia="0.13144 0.13144 0.13144"/>
+
+      <geom mesh="body_0" material="BlackAbs" class="visual"/>
+      <geom mesh="body_1" material="wrap" class="visual"/>
+      <geom mesh="body_collision" class="collision"/>
+      <geom class="reward_collision_sphere" pos="0 0 0" size="0.12"/>
+
+      <camera name="ego_camera" pos="0.4 0 0" quat="0.6532815 0.2705981 -0.2705981 -0.6532815"/>
+
+      <body name="fl_hip" pos="0.29785 0.055 0">
+        <inertial pos="-0.00537435 0.0128418 9.87523e-05" quat="1 1 -1 1" mass="1.68"
+          diaginertia="0.00226544 0.00211474 0.00181296"/>
+        <joint name="fl_hx" axis="1 0 0" range="-0.785398 0.785398"/>
+        <geom material="BlackAbs" mesh="front_left_hip" class="visual"/>
+        <body name="fl_uleg" pos="0 0.1108 0">
+          <inertial pos="0.00514237 -0.00243237 -0.121009" mass="2.34" diaginertia="0.0275596 0.0273549 0.00284815"/>
+          <joint name="fl_hy" axis="0 1 0" range="-0.898845 2.29511"/>
+          <geom mesh="front_left_upper_leg_0" material="wrap" class="visual"/>
+          <geom mesh="front_left_upper_leg_1" material="BlackAbs" class="visual"/>
+          <geom mesh="left_upper_leg_collision" class="collision"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.07"/>
+          <body name="fl_lleg" pos="0.025 0 -0.32">
+            <inertial pos="0.00225794 4.6076e-05 -0.180082" quat="1 0 0 1" mass="0.35"
+              diaginertia="0.00405032 0.00399902 0.00014934"/>
+            <joint name="fl_kn" axis="0 1 0" range="-2.7929 -0.254402"/>
+            <geom material="BlackAbs" mesh="front_left_lower_leg" class="visual"/>
+            <geom mesh="left_lower_leg_collision" class="collision"/>
+            <geom name="FL_foot" class="foot"/>
+            <site name="FL_foot" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="0 0 -0.3365" size="0.04"/>
+          </body>
+        </body>
+      </body>
+      <body name="fr_hip" pos="0.29785 -0.055 0">
+        <inertial pos="-0.00537435 -0.0128418 -9.87523e-05" quat="1 1 -1 1" mass="1.68"
+          diaginertia="0.00226544 0.00211474 0.00181296"/>
+        <joint name="fr_hx" axis="1 0 0" range="-0.785398 0.785398"/>
+        <geom material="BlackAbs" mesh="front_right_hip" class="visual"/>
+        <body name="fr_uleg" pos="0 -0.1108 0">
+          <inertial pos="0.00514237 0.00243237 -0.121009" mass="2.34" diaginertia="0.0275596 0.0273549 0.00284815"/>
+          <joint name="fr_hy" axis="0 -1 0" range="-2.24363 0.898845"/>
+          <geom mesh="front_right_upper_leg_0" material="wrap" class="visual"/>
+          <geom mesh="front_right_upper_leg_1" material="BlackAbs" class="visual"/>
+          <geom mesh="right_upper_leg_collision" class="collision"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.07"/>
+          <body name="fr_lleg" pos="0.025 0 -0.32">
+            <inertial pos="0.00225794 4.6076e-05 -0.180082" quat="1 0 0 1" mass="0.35"
+              diaginertia="0.00405032 0.00399902 0.00014934"/>
+            <joint name="fr_kn" axis="0 -1 0" range="0.255648 2.7929"/>
+            <geom material="BlackAbs" mesh="front_right_lower_leg" class="visual"/>
+            <geom mesh="right_lower_leg_collision" class="collision"/>
+            <geom name="FR_foot" class="foot"/>
+            <site name="FR_foot" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="0 0 -0.3365" size="0.04"/>
+          </body>
+        </body>
+      </body>
+      <body name="hl_hip" pos="-0.29785 0.055 0">
+        <inertial pos="0.00537435 0.0128418 -9.87523e-05" quat="1 1 -1 1" mass="1.68"
+          diaginertia="0.00226544 0.00211474 0.00181296"/>
+        <joint name="hl_hx" axis="-1 0 0" range="-0.785398 0.785398"/>
+        <geom material="BlackAbs" mesh="rear_left_hip" class="visual"/>
+        <body name="hl_uleg" pos="0 0.1108 0">
+          <inertial pos="0.00514237 -0.00243237 -0.121009" mass="2.34" diaginertia="0.0275596 0.0273549 0.00284815"/>
+          <joint name="hl_hy" axis="0 1 0" range="-0.898845 2.29511"/>
+          <geom mesh="rear_left_upper_leg_0" material="wrap" class="visual"/>
+          <geom mesh="rear_left_upper_leg_1" material="BlackAbs" class="visual"/>
+          <geom mesh="left_upper_leg_collision" class="collision"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.07"/>
+          <body name="hl_lleg" pos="0.025 0 -0.32">
+            <inertial pos="0.00225794 4.6076e-05 -0.180082" quat="1 0 0 1" mass="0.35"
+              diaginertia="0.00405032 0.00399902 0.00014934"/>
+            <joint name="hl_kn" axis="0 1 0" range="-2.7929 -0.247067"/>
+            <geom material="BlackAbs" mesh="rear_left_lower_leg" class="visual"/>
+            <geom mesh="left_lower_leg_collision" class="collision"/>
+            <geom name="RL_foot" class="foot"/>
+            <site name="RL_foot" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="0 0 -0.3365" size="0.04"/>
+          </body>
+        </body>
+      </body>
+      <body name="hr_hip" pos="-0.29785 -0.055 0">
+        <inertial pos="0.00537435 -0.0128418 9.87523e-05" quat="1 1 -1 1" mass="1.68"
+          diaginertia="0.00226544 0.00211474 0.00181296"/>
+        <joint name="hr_hx" axis="-1 0 0" range="-0.785398 0.785398"/>
+        <geom material="BlackAbs" mesh="rear_right_hip" class="visual"/>
+        <body name="hr_uleg" pos="0 -0.1108 0">
+          <inertial pos="0.00514237 0.00243237 -0.121009" mass="2.34" diaginertia="0.0275596 0.0273549 0.00284815"/>
+          <joint name="hr_hy" axis="0 -1 0" range="-2.29511 0.898845"/>
+          <geom mesh="rear_right_upper_leg_0" material="wrap" class="visual"/>
+          <geom mesh="rear_right_upper_leg_1" material="BlackAbs" class="visual"/>
+          <geom mesh="right_upper_leg_collision" class="collision"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.07"/>
+          <body name="hr_lleg" pos="0.025 0 -0.32">
+            <inertial pos="0.00225794 4.6076e-05 -0.180082" quat="1 0 0 1" mass="0.35"
+              diaginertia="0.00405032 0.00399902 0.00014934"/>
+            <joint name="hr_kn" axis="0 -1 0" range="0.248282 2.7929"/>
+            <geom material="BlackAbs" mesh="rear_left_lower_leg" class="visual"/>
+            <geom mesh="right_lower_leg_collision" class="collision"/>
+            <geom name="RR_foot" class="foot"/>
+            <site name="RR_foot" class="foot"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="0 0 -0.3365" size="0.04"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="FL_foot" geom2="floor"/>
+    <pair geom1="FR_foot" geom2="floor"/>
+    <pair geom1="RL_foot" geom2="floor"/>
+    <pair geom1="RR_foot" geom2="floor"/>
+  </contact>
+
+
+  <actuator>
+    <!-- Actually knee torque is varying with the knee angle. Between 30 and 113 Nm. See https://dev.bostondynamics.com/docs/concepts/joint_control/knee_torque_limits -->
+    <position name="fl_hx" joint="fl_hx" forcerange="-44.88 44.88"/>
+    <position name="fl_hy" joint="fl_hy" forcerange="-44.88 44.88"/>
+    <position name="fl_kn" joint="fl_kn" forcerange="-115.0 115.0"/>
+    <position name="fr_hx" joint="fr_hx" forcerange="-44.88 44.88"/>
+    <position name="fr_hy" joint="fr_hy" forcerange="-44.88 44.88"/>
+    <position name="fr_kn" joint="fr_kn" forcerange="-115.0 115.0"/>
+    <position name="hl_hx" joint="hl_hx" forcerange="-44.88 44.88"/>
+    <position name="hl_hy" joint="hl_hy" forcerange="-44.88 44.88"/>
+    <position name="hl_kn" joint="hl_kn" forcerange="-115.0 115.0"/>
+    <position name="hr_hx" joint="hr_hx" forcerange="-44.88 44.88"/>
+    <position name="hr_hy" joint="hr_hy" forcerange="-44.88 44.88"/>
+    <position name="hr_kn" joint="hr_kn" forcerange="-115.0 115.0"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="FL_foot" name="FL_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="FR_foot" name="FR_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RL_foot" name="RL_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RR_foot" name="RR_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.521 1 0 0 0
+      0.1 0.8 -1.5
+      -0.1 -0.8 1.5
+      -0.1 0.8 -1.5
+      0.1 -0.8 1.5"/>
+  </keyframe>
+</mujoco>

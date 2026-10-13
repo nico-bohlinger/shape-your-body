@@ -1,0 +1,271 @@
+<mujoco model="sigmaban">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.01"/>
+    <position forcelimited="true" kp="21" kv="0.5"/>
+
+    <default class="foot">
+      <geom type="box" size="0.0788 0.046 0.011" solimp="0.02 1 0.012" quat="0.5 -0.5 -0.5 -0.5" priority="1" condim="6" friction="1.0 0.005 0.011" group="4"/>
+      <site quat="0.5 -0.5 -0.5 -0.5"/>
+    </default>
+
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <mesh name="torso_2023_visual" file="torso_2023_visual.stl"/>
+    <mesh name="u_neck_visual" file="u_neck_visual.stl"/>
+    <mesh name="head_2023__field_of_view_false_visual" file="head_2023__field_of_view_false_visual.stl"/>
+    <mesh name="u_shoulder_2023_visual" file="u_shoulder_2023_visual.stl"/>
+    <mesh name="left_humerus_visual" file="left_humerus_visual.stl"/>
+    <mesh name="radius_v2_visual" file="radius_v2_visual.stl"/>
+    <mesh name="u_shoulder_2023_2_visual" file="u_shoulder_2023_2_visual.stl"/>
+    <mesh name="right_humerus_visual" file="right_humerus_visual.stl"/>
+    <mesh name="radius_v2_2_visual" file="radius_v2_2_visual.stl"/>
+    <mesh name="u_block_2023_visual" file="u_block_2023_visual.stl"/>
+    <mesh name="mx106_block_hip__list_0bj1pweadmbeeq_hip_visual" file="mx106_block_hip__list_0bj1pweadmbeeq_hip_visual.stl"/>
+    <mesh name="left_knee_2023_visual" file="left_knee_2023_visual.stl"/>
+    <mesh name="tibia_2023_visual" file="tibia_2023_visual.stl"/>
+    <mesh name="mx106_block_mir_ankle_visual" file="mx106_block_mir_ankle_visual.stl"/>
+    <mesh name="left_foot___list_t0v6opd9rekumc_default_visual" file="left_foot___list_t0v6opd9rekumc_default_visual.stl"/>
+    <mesh name="u_block_2023_2_visual" file="u_block_2023_2_visual.stl"/>
+    <mesh name="mx106_block_mir_hip__list_mr67plvazplf9a_hip_visual" file="mx106_block_mir_hip__list_mr67plvazplf9a_hip_visual.stl"/>
+    <mesh name="right_knee_2023_visual" file="right_knee_2023_visual.stl"/>
+    <mesh name="tibia_2023_2_visual" file="tibia_2023_2_visual.stl"/>
+    <mesh name="mx106_block_ankle__list_0bj1pweadmbeeq_default_visual" file="mx106_block_ankle__list_0bj1pweadmbeeq_default_visual.stl"/>
+    <mesh name="right_foot__visual" file="right_foot__visual.stl"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <site name="imu" pos="0.02 0 0.1"/>  <!-- guess -->
+
+      <inertial pos="0.00156484 6.73262e-05 0.070745" quat="0.99676 -0.0200847 -0.0149022 0.0764468"
+        mass="3.27516" diaginertia="0.0199727 0.0188364 0.0126333"/>
+
+      <geom type="mesh" mesh="torso_2023_visual" rgba="0.1989915035131896992 0.20531734779085586418 0.21164319206852200139 1.0"/>
+      <geom class="reward_collision_sphere" pos="0 0 0.08" size="0.08"/>
+
+      <camera name="ego_camera" pos="0.07 -0.003 0.28" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="u_neck" pos="0.0333892 1.47174e-07 0.1805" quat="0.707107 0 0 -0.707107">
+        <inertial pos="0 0 0.0206334" quat="0.707107 0 0 0.707107" mass="0.0544799"
+          diaginertia="5.16952e-05 3.05787e-05 2.98525e-05"/>
+        <joint name="head_yaw" pos="0 0 0" axis="0 0 1" armature="0.012" frictionloss="0.09" range="-2.0944 2.0944"/>
+        <geom type="mesh" mesh="u_neck_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+        <body name="head_2023__field_of_view_false" pos="-0.0235 0 0.058302" quat="0.5 0.5 -0.5 -0.5">
+          <inertial pos="-0.000139837 0.00397747 -0.0233757" quat="0.713826 0.697167 -0.0325639 0.0578699"
+            mass="0.257265" diaginertia="0.000251953 0.000245992 0.000105535"/>
+          <joint name="head_pitch" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-1.5708 0.785398"/>
+          <geom type="mesh" mesh="head_2023__field_of_view_false_visual" rgba="0.32045575682762950098 0.31487383381853989439 0.29812806479127107462 1.0"/>
+          <geom class="reward_collision_sphere" pos="0 0.02 -0.023" size="0.06"/>
+        </body>
+      </body>
+      <body name="u_shoulder_2023" pos="0.0283892 0.0795001 0.164" quat="0.707107 -0.707107 0 0">
+        <inertial pos="0 0.00364642 0.0214003" quat="0.534183 0.463302 0.534183 0.463302" mass="0.0751043"
+          diaginertia="5.70899e-05 4.53448e-05 3.35766e-05"/>
+        <joint name="left_shoulder_pitch" pos="0 0 0" axis="0 0 1" armature="0.012" frictionloss="0.09" range="-2.18166 2.18166"/>
+        <geom type="mesh" mesh="u_shoulder_2023_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+        <body name="left_humerus" pos="0.0235 0.03 0.03" quat="0.092296 -0.701057 0.092296 -0.701057">
+          <inertial pos="0.000340637 -0.0522685 -0.0268822" quat="0.6755 0.737155 -0.00965607 0.0144769"
+            mass="0.243502" diaginertia="0.0007708 0.000757172 7.90289e-05"/>
+          <joint name="left_shoulder_roll" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-1.309 0.261799"/>
+          <geom type="mesh" mesh="left_humerus_visual" rgba="0.26470081700903541622 0.26470081700903541622 0.26470081700903541622 1.0"/>
+          <geom class="reward_collision_sphere" pos="0 0 -0.025" size="0.03"/>
+          <body name="radius_v2" pos="0.0235 -0.142 -0.0025" quat="0.707107 0 0.707107 0">
+            <inertial pos="7.98171e-05 -0.0556905 -0.0234333" quat="0.516125 0.5144 -0.483923 0.484589"
+              mass="0.256846" diaginertia="0.000947096 0.000937203 0.000130591"/>
+            <joint name="left_elbow" pos="0 0 0" axis="0 0 1" armature="0.012" frictionloss="0.09" range="-2.79253 0.261799"/>
+            <geom type="mesh" mesh="radius_v2_visual" rgba="0.21421337674205656598 0.21421337674205656598 0.21421337674205656598 1.0"/>
+            <geom class="reward_collision_sphere" pos="0 0 -0.025" size="0.03"/>
+            <geom class="reward_collision_sphere" pos="0 -0.15 -0.025" size="0.04"/>
+          </body>
+        </body>
+      </body>
+      <body name="u_shoulder_2023_2" pos="0.0283892 -0.0794999 0.164" quat="0 0 -0.707107 -0.707107">
+        <inertial pos="0 -0.00364642 -0.0214003" quat="0.534183 0.463302 0.534183 0.463302" mass="0.0751043"
+          diaginertia="5.70899e-05 4.53448e-05 3.35766e-05"/>
+        <joint name="right_shoulder_pitch" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-2.18166 2.18166"/>
+        <geom type="mesh" mesh="u_shoulder_2023_2_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+        <body name="right_humerus" pos="-0.0235 -0.03 -0.03" quat="0.701057 0.092296 -0.701057 -0.092296">
+          <inertial pos="-0.000172255 -0.0522685 -0.0268669" quat="0.675487 0.736848 -0.0236007 0.014685"
+            mass="0.243502" diaginertia="0.000770875 0.000757172 7.90454e-05"/>
+          <joint name="right_shoulder_roll" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-0.261799 1.309"/>
+          <geom type="mesh" mesh="right_humerus_visual" rgba="0.26470081700903541622 0.26470081700903541622 0.26470081700903541622 1.0"/>
+          <geom class="reward_collision_sphere" pos="0 0 -0.025" size="0.03"/>
+          <body name="radius_v2_2" pos="-0.0235 -0.142 -0.0025" quat="0 -0.707107 0 -0.707107">
+            <inertial pos="7.98171e-05 0.0556905 0.0234333" quat="0.484589 0.483923 -0.5144 0.516125"
+              mass="0.256846" diaginertia="0.000947096 0.000937203 0.000130591"/>
+            <joint name="right_elbow" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-0.261799 2.79253"/>
+            <geom type="mesh" mesh="radius_v2_2_visual" rgba="0.21421337674205656598 0.21421337674205656598 0.21421337674205656598 1.0"/>
+            <geom class="reward_collision_sphere" pos="0 0 0.025" size="0.03"/>
+            <geom class="reward_collision_sphere" pos="0 0.15 0.025" size="0.04"/>
+          </body>
+        </body>
+      </body>
+      <body name="u_block_2023" pos="0.0033892 0.0464001 -0.021" quat="0 0 0 -1">
+        <inertial pos="-0.00509532 -8.44195e-07 -0.00985131" quat="0.531959 0.465906 0.466024 0.531765"
+          mass="0.0630136" diaginertia="4.24266e-05 3.5526e-05 2.00009e-05"/>
+        <joint name="left_hip_yaw" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-1.0472 1.0472"/>
+        <geom type="mesh" mesh="u_block_2023_visual" rgba="0.30196078431372552764 0.30196078431372552764 0.30196078431372552764 1.0"/>
+        <body name="mx106_block_hip__list_0bj1pweadmbeeq_hip" pos="0.0234 0 -0.04" quat="0.5 0.5 -0.5 -0.5">
+          <inertial pos="-0.000525167 -0.0153964 0.00382779" quat="0.996695 -0.0796662 -0.00761504 0.0139099"
+            mass="0.397097" diaginertia="0.000428697 0.000375755 0.000176713"/>
+          <joint name="left_hip_roll" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-0.610865 0.523599"/>
+          <geom type="mesh" mesh="mx106_block_hip__list_0bj1pweadmbeeq_hip_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+          <body name="left_knee_2023" pos="0.0295 0 0.0234" quat="0 0.707107 0 0.707107">
+            <inertial pos="-3.04946e-05 0.100616 -0.0296228"
+              quat="0.722599 0.691267 -0.000117213 -0.000114115" mass="0.268473"
+              diaginertia="0.000539256 0.000462483 0.000122223"/>
+            <joint name="left_hip_pitch" pos="0 0 0" axis="0 0 1" armature="0.025" frictionloss="0.10" range="-1.5708 0.67"/>
+            <geom type="mesh" mesh="left_knee_2023_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+            <geom class="reward_collision_sphere" pos="0 0 -0.028" size="0.035"/>
+            <body name="tibia_2023" pos="0 0.14 -0.001" quat="1 0 0 0">
+              <inertial pos="-0.00296199 0.0631405 -0.0268398"
+                quat="0.706918 0.707174 -0.00934954 -0.00915237" mass="0.113077"
+                diaginertia="0.000351979 0.00027164 0.000103748"/>
+              <joint name="left_knee" pos="0 0 0" axis="0 0 1" armature="0.025" frictionloss="0.10" range="0 2.2689280"/>
+              <geom type="mesh" mesh="tibia_2023_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+              <geom class="reward_collision_sphere" pos="0 0 -0.028" size="0.035"/>
+              <body name="mx106_block_mir_ankle" pos="0 0.14 0" quat="0 0 0 1">
+                <inertial pos="0.0195695 0.0153964 -0.0290274"
+                  quat="-0.0662501 0.699432 0.0464073 0.710107" mass="0.397097"
+                  diaginertia="0.000428738 0.000375795 0.000176713"/>
+                <joint name="left_ankle_pitch" pos="0 0 0" axis="0 0 1" armature="0.025" frictionloss="0.10" range="-1.308996 1.308996"/>
+                <geom type="mesh" mesh="mx106_block_mir_ankle_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+                <body name="left_foot___list_t0v6opd9rekumc_default" pos="0.0234 0 -0.0285"
+                  quat="0.707107 0 -0.707107 0">
+                  <inertial pos="0.00454445 -0.0365542 0.0466461"
+                    quat="0.711591 -0.00419889 0.011253 0.702491" mass="0.281856"
+                    diaginertia="0.000922792 0.000718237 0.000264953"/>
+                  <joint name="left_ankle_roll" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-0.785398 0.785398"/>
+                  <geom type="mesh" mesh="left_foot___list_t0v6opd9rekumc_default_visual" rgba="0.30196078431372547213 0.30093481115542580762 0.2985408737860601458 1.0"/>
+                  <geom name="left_foot" class="foot" pos="0.0055 -0.051 0.03867"/>
+                  <site name="left_foot" class="foot" pos="0.0055 -0.051 0.03867"/>
+                  <geom class="reward_collision_sphere" pos="0.005 -0.04 0" size="0.046"/>
+                  <geom class="reward_collision_sphere" pos="-0.011 -0.04 0.09" size="0.03"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="u_block_2023_2" pos="0.0033892 -0.0463999 -0.021" quat="0 0 0 -1">
+        <inertial pos="-0.00509532 -8.44195e-07 -0.00985131" quat="0.531959 0.465906 0.466024 0.531765"
+          mass="0.0630136" diaginertia="4.24266e-05 3.5526e-05 2.00009e-05"/>
+        <joint name="right_hip_yaw" pos="0 0 0" axis="0 0 -1" armature="0.012" frictionloss="0.09" range="-1.0472 1.0472"/>
+        <geom type="mesh" mesh="u_block_2023_2_visual" rgba="0.30196078431372552764 0.30196078431372552764 0.30196078431372552764 1.0"/>
+        <body name="mx106_block_mir_hip__list_mr67plvazplf9a_hip" pos="0.0234 0 -0.04" quat="0.5 0.5 -0.5 -0.5">
+          <inertial pos="0.000527445 -0.0153964 0.00383064" quat="0.996695 -0.0796624 0.0075433 -0.0140338"
+            mass="0.397097" diaginertia="0.000428741 0.000375798 0.000176713"/>
+          <joint name="right_hip_roll" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-0.523599 0.610865"/>
+          <geom type="mesh" mesh="mx106_block_mir_hip__list_mr67plvazplf9a_hip_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+          <body name="right_knee_2023" pos="-0.0295 0 0.0234" quat="0.707107 0 0.707107 0">
+            <inertial pos="-3.04946e-05 -0.100616 0.0296089"
+              quat="0.722631 0.691234 0.000116647 0.000114696" mass="0.268473"
+              diaginertia="0.000539257 0.000462486 0.000122221"/>
+            <joint name="right_hip_pitch" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-0.67 1.5708"/>
+            <geom type="mesh" mesh="right_knee_2023_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+            <geom class="reward_collision_sphere" pos="0 0 0.028" size="0.035"/>
+            <body name="tibia_2023_2" pos="0 -0.14 0.001" quat="0 0 0 -1">
+              <inertial pos="-0.00296199 0.0631406 0.0268398"
+                quat="0.707175 0.706918 -0.00915244 -0.00934946" mass="0.113077"
+                diaginertia="0.000351979 0.00027164 0.000103748"/>
+              <joint name="right_knee" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-2.2689280 0"/>
+              <geom type="mesh" mesh="tibia_2023_2_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+              <geom class="reward_collision_sphere" pos="0 0 0.028" size="0.035"/>
+              <body name="mx106_block_ankle__list_0bj1pweadmbeeq_default" pos="0 0.14 0" quat="1 0 0 0">
+                <inertial pos="-0.0195724 -0.0153964 0.0290252"
+                  quat="-0.0661652 0.699382 0.0464976 0.710158" mass="0.397097"
+                  diaginertia="0.000428694 0.000375752 0.000176714"/>
+                <joint name="right_ankle_pitch" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-1.308996 1.308996"/>
+                <geom type="mesh" mesh="mx106_block_ankle__list_0bj1pweadmbeeq_default_visual" rgba="0.30196078431372547213 0.30196078431372547213 0.30196078431372547213 1.0"/>
+                <body name="right_foot_" pos="-0.0234 0 0.0285" quat="0 -0.707107 0 -0.707107">
+                  <inertial pos="-0.00454439 -0.0365542 0.0466461"
+                    quat="0.702491 -0.0112532 0.00419872 0.711591" mass="0.281856"
+                    diaginertia="0.000922792 0.000718237 0.000264953"/>
+                  <joint name="right_ankle_roll" pos="0 0 0" axis="0 0 -1" armature="0.025" frictionloss="0.10" range="-0.785398 0.785398"/>
+                  <geom type="mesh" mesh="right_foot__visual" rgba="0.30196078431372547213 0.30093481115542580762 0.2985408737860601458 1.0"/>
+                  <geom name="right_foot" class="foot" pos="-0.0055 -0.051 0.03867"/>
+                  <site name="right_foot" class="foot" pos="-0.0055 -0.051 0.03867"/>
+                  <geom class="reward_collision_sphere" pos="-0.005 -0.04 0" size="0.046"/>
+                  <geom class="reward_collision_sphere" pos="0.011 -0.04 0.09" size="0.03"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="left_foot" geom2="floor"/>
+    <pair geom1="right_foot" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="head_yaw" joint="head_yaw" forcerange="-5 5"/>
+    <position name="head_pitch" joint="head_pitch" forcerange="-5 5"/>
+    <position name="left_shoulder_pitch" joint="left_shoulder_pitch" forcerange="-5 5"/>
+    <position name="left_shoulder_roll" joint="left_shoulder_roll" forcerange="-5 5"/>
+    <position name="left_elbow" joint="left_elbow" forcerange="-5 5"/>
+    <position name="right_shoulder_pitch" joint="right_shoulder_pitch" forcerange="-5 5"/>
+    <position name="right_shoulder_roll" joint="right_shoulder_roll" forcerange="-5 5"/>
+    <position name="right_elbow" joint="right_elbow" forcerange="-5 5"/>
+    <position name="left_hip_yaw" joint="left_hip_yaw" forcerange="-5 5"/>
+    <position name="left_hip_roll" joint="left_hip_roll" forcerange="-8 8"/>
+    <position name="left_hip_pitch" joint="left_hip_pitch" forcerange="-8 8"/>
+    <position name="left_knee" joint="left_knee" forcerange="-8 8"/>
+    <position name="left_ankle_pitch" joint="left_ankle_pitch" forcerange="-8 8"/>
+    <position name="left_ankle_roll" joint="left_ankle_roll" forcerange="-8 8"/>
+    <position name="right_hip_yaw" joint="right_hip_yaw" forcerange="-5 5"/>
+    <position name="right_hip_roll" joint="right_hip_roll" forcerange="-8 8"/>
+    <position name="right_hip_pitch" joint="right_hip_pitch" forcerange="-8 8"/>
+    <position name="right_knee" joint="right_knee" forcerange="-8 8"/>
+    <position name="right_ankle_pitch" joint="right_ankle_pitch" forcerange="-8 8"/>
+    <position name="right_ankle_roll" joint="right_ankle_roll" forcerange="-8 8"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="left_foot" name="left_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="right_foot" name="right_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.3809 1 0 0 0
+      0.0 0.0
+      0.0 -0.05 -0.6
+      0.0 0.05 0.6
+      0.0 0.0 -0.4 0.8 -0.4 0.0
+      0.0 0.0 0.4 -0.8 0.4 0.0"/>
+  </keyframe>
+</mujoco>

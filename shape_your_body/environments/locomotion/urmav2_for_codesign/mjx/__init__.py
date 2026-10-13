@@ -1,0 +1,8 @@
+from rl_x.environments.environment_manager import extract_environment_name_from_file, register_environment
+from shape_your_body.environments.locomotion.urmav2_for_codesign.mjx.create_env import create_env
+from shape_your_body.environments.locomotion.urmav2_for_codesign.mjx.default_config import get_config
+from shape_your_body.environments.locomotion.urmav2_for_codesign.mjx.general_properties import GeneralProperties
+
+
+URMAV2_FOR_CODESIGN_ENV = extract_environment_name_from_file(__file__)
+register_environment(URMAV2_FOR_CODESIGN_ENV, get_config, create_env, GeneralProperties)

@@ -1,0 +1,208 @@
+<mujoco model="zqsa01">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <joint damping="0.01" frictionloss="0.1"/>
+    <position forcelimited="true" kp="55" kv="1.5"/>
+
+    <default class="foot">
+      <geom type="box" size="0.135 0.050 0.01" solimp="0.015 1 0.01" priority="1" condim="6" friction="1.0 0.005 0.0001" group="4"/>
+    </default>
+
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <texture name='plane' type='2d' builtin='checker' rgb1='0.2745 0.5098 0.7059' rgb2='0.5294 0.8078 0.9804' width='512' height='512'/>
+    <material name='plane' reflectance='0.0' texture='plane' texrepeat='1 1' texuniform='true'/>
+    <mesh name="base_link" file="Base_link.STL" />
+    <mesh name="left_leg_link_01" file="LeftLeg_Link_01.STL" />
+    <mesh name="left_leg_link_02" file="LeftLeg_Link_02.STL" />
+    <mesh name="left_leg_link_03" file="LeftLeg_Link_03.STL" />
+    <mesh name="left_leg_link_04" file="LeftLeg_Link_04.STL" />
+    <mesh name="left_leg_link_05" file="LeftLeg_Link_05.STL" />
+    <mesh name="left_leg_link_06" file="LeftLeg_Link_06.STL" />
+    <mesh name="right_leg_link_01" file="RightLeg_Link_01.STL" />
+    <mesh name="right_leg_link_02" file="RightLeg_Link_02.STL" />
+    <mesh name="right_leg_link_03" file="RightLeg_Link_03.STL" />
+    <mesh name="right_leg_link_04" file="RightLeg_Link_04.STL" />
+    <mesh name="right_leg_link_05" file="RightLeg_Link_05.STL" />
+    <mesh name="right_leg_link_06" file="RightLeg_Link_06.STL" />
+
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk" pos="0 0 0">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <site name="imu" pos="0 0 0"/>
+
+      <inertial pos="-0.030427 0.00055533 0.10697" quat="1 0 0 0" mass="10.176" diaginertia="0.24707543 0.21999950689 0.09662582243" />
+
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="base_link" solimp=".9 .99 .003" />
+      <geom class="reward_collision_sphere" pos="0 0 0.05" size="0.12"/>
+
+      <camera name="ego_camera" pos="0.06 0 0.36" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="leg_l1_link" pos="0 0.075 0">
+        <inertial pos="0.0003501 0.00043844 -0.0020201"
+          quat="-0.0065488 0.706024 -0.0111095 0.70807" mass="1.6592"
+          diaginertia="0.00296297 0.00222409 0.00170967" />
+        <joint name="leg_l1_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-0.523 0.523" armature="0.042" />
+        <geom type="mesh" group="1" mesh="left_leg_link_01" rgba="0.2 0.2 0.2 1"/>
+        <geom type="mesh" mesh="left_leg_link_01" rgba="0.2 0.2 0.2 1"/>
+        <body name="leg_l2_link" pos="0 0 0">
+          <inertial pos="0.00038352 0.0010044 -0.12214"
+            quat="0.70363 0.00263141 -0.0033314 0.710554" mass="1.8008"
+            diaginertia="0.00367949 0.00285141 0.00191724" />
+          <joint name="leg_l2_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-0.3 0.3" armature="0.042" />
+          <geom type="mesh" group="1" mesh="left_leg_link_02" rgba="0.2 0.2 0.2 1"/>
+          <geom type="mesh" mesh="left_leg_link_02" rgba="0.2 0.2 0.2 1"/>
+          <body name="leg_l3_link" pos="0 0 -0.1311">
+            <inertial pos="-0.0017654 0.0012877 -0.13954"
+              quat="0.705731 -0.0339526 -0.0114711 0.707573" mass="3.9299"
+              diaginertia="0.0356364 0.0321225 0.0100504" />
+            <joint name="leg_l3_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.204 1.204"  armature="0.042" />
+            <geom type="mesh" group="1" mesh="left_leg_link_03" rgba="0.898039 0.917647 0.929412 1"/>
+            <geom type="mesh" mesh="left_leg_link_03" rgba="0.898039 0.917647 0.929412 1"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.06"/>
+            <body name="leg_l4_link" pos="0 5.9998e-05 -0.3">
+              <inertial pos="-0.00751 -0.00041 -0.16322"
+                quat="0.693729 0.00650206 0.000979008 0.720206" mass="2.7251"
+                diaginertia="0.0323536 0.0303232 0.0038887" />
+              <joint name="leg_l4_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-0.15 2.268" armature="0.042" />
+              <geom type="mesh" group="1" mesh="left_leg_link_04" rgba="0.898039 0.917647 0.929412 1"/>
+              <geom type="mesh" mesh="left_leg_link_04" rgba="0.898039 0.917647 0.929412 1"/>
+              <geom class="reward_collision_sphere" pos="0 0 0" size="0.055"/>
+              <body name="leg_l5_link" pos="0 7.0122e-05 -0.37">
+                <inertial pos="-2.5946e-10 -5e-05 -3.4499e-09" mass="0.16135"
+                  diaginertia="3.0975E-05 3.1274E-05 3.1681E-05" />
+                <joint name="leg_l5_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1 0.6" armature="0.0035" />
+                <geom type="mesh" group="1" mesh="left_leg_link_05" rgba="0.2 0.2 0.2 1"/>
+                <geom type="mesh" mesh="left_leg_link_05" rgba="0.2 0.2 0.2 1"/>
+                <body name="leg_l6_link" pos="0 0 0">
+                  <inertial pos="0.030366 0.0019502 -0.03549"
+                    quat="-0.00154474 0.73536 0.0223416 0.677307" mass="1.1926"
+                    diaginertia="0.0064983 0.00607208 0.0010107" />
+                  <joint name="leg_l6_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-0.6 0.6" armature="0.0035" />
+                  <geom type="mesh" mesh="left_leg_link_06" rgba="0.2 0.2 0.2 1"/>
+                  <geom name="left_foot" pos="0.06 0.005 -0.045" class="foot"/>
+                  <site name="left_foot" pos="0.06 0.005 -0.045" class="foot"/>
+                  <geom class="reward_collision_sphere" pos="0 0 -0.03" size="0.055"/>
+                  <geom class="reward_collision_sphere" pos="0.14 -0.03 -0.05" size="0.02"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="leg_r1_link" pos="0 -0.075 0">
+        <inertial pos="0.0003501 0.00043844 -0.0020201"
+          quat="-0.0065488 0.706024 -0.0111095 0.70807" mass="1.6592"
+          diaginertia="0.00296297 0.00222409 0.00170967" />
+        <joint name="leg_r1_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-0.523 0.523" armature="0.042" />
+        <geom type="mesh" group="1" mesh="right_leg_link_01" rgba="0.2 0.2 0.2 1"/>
+        <geom type="mesh" mesh="right_leg_link_01" rgba="0.2 0.2 0.2 1"/>
+        <body name="leg_r2_link" pos="0 0 0">
+          <inertial pos="-0.00038352 -0.0010044 -0.12214"
+            quat="0.70363 -0.00263141 0.0033314 0.710554" mass="1.8008"
+            diaginertia="0.00367949 0.00285141 0.00191724" />
+          <joint name="leg_r2_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-0.3 0.3" armature="0.042" />
+          <geom type="mesh" group="1" mesh="right_leg_link_02" rgba="0.2 0.2 0.2 1"/>
+          <geom type="mesh" mesh="right_leg_link_02" rgba="0.2 0.2 0.2 1"/>
+          <body name="leg_r3_link" pos="0 0 -0.1311">
+            <inertial pos="-0.0017403 -0.0012919 -0.13954"
+              quat="0.708108 -0.0111519 -0.0337366 0.70521" mass="3.9294"
+              diaginertia="0.0356245 0.032111 0.0100492" />
+            <joint name="leg_r3_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-1.204 1.204" armature="0.042" />
+            <geom type="mesh" group="1" mesh="right_leg_link_03" rgba="0.898039 0.917647 0.929412 1"/>
+            <geom type="mesh" mesh="right_leg_link_03" rgba="0.898039 0.917647 0.929412 1"/>
+            <geom class="reward_collision_sphere" pos="0 0 0" size="0.06"/>
+            <body name="leg_r4_link" pos="0 -5.9998e-05 -0.3">
+              <inertial pos="-0.00751 0.00047274 -0.16321"
+                quat="0.72021 0.000981472 0.0065065 0.693725" mass="2.72497"
+                diaginertia="0.0323518 0.0303213 0.00388869" />
+              <joint name="leg_r4_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-2.268 0.15" armature="0.042" />
+              <geom type="mesh" group="1" mesh="right_leg_link_04" rgba="0.898039 0.917647 0.929412 1"/>
+              <geom type="mesh" mesh="right_leg_link_04" rgba="0.898039 0.917647 0.929412 1"/>
+              <geom class="reward_collision_sphere" pos="0 0 0" size="0.055"/>
+              <body name="leg_r5_link" pos="0 -7.0122e-05 -0.37">
+                <inertial pos="2.5946e-10 5e-05 -3.4499e-09" mass="0.16135"
+                  diaginertia="3.0975E-05 3.1274E-05 3.1274E-05" />
+                <joint name="leg_r5_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-0.6 1" armature="0.0035" />
+                <geom type="mesh" group="1" mesh="right_leg_link_05" rgba="0.2 0.2 0.2 1"/>
+                <geom type="mesh" mesh="right_leg_link_05" rgba="0.2 0.2 0.2 1"/>
+                <body name="leg_r6_link" pos="0 0 0">
+                  <inertial pos="0.030366 -0.0019504 -0.03549"
+                    quat="0.00154561 0.735362 -0.0223429 0.677304" mass="1.1926"
+                    diaginertia="0.00649845 0.00607224 0.00101071" />
+                  <joint name="leg_r6_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-0.6 0.6" armature="0.0035" />
+                  <geom type="mesh" mesh="right_leg_link_06" rgba="0.2 0.2 0.2 1"/>
+                  <geom name="right_foot" pos="0.06 -0.005 -0.045" class="foot"/>
+                  <site name="right_foot" pos="0.06 -0.005 -0.045" class="foot"/>
+                  <geom class="reward_collision_sphere" pos="0 0 -0.03" size="0.055"/>
+                  <geom class="reward_collision_sphere" pos="0.14 0.03 -0.05" size="0.02"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="left_foot" geom2="floor"/>
+    <pair geom1="right_foot" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="leg_l1_joint" joint="leg_l1_joint" forcerange="-140 140" />
+    <position name="leg_l2_joint" joint="leg_l2_joint" forcerange="-140 140" />
+    <position name="leg_l3_joint" joint="leg_l3_joint" forcerange="-140 140" />
+    <position name="leg_l4_joint" joint="leg_l4_joint" forcerange="-140 140" />
+    <position name="leg_l5_joint" joint="leg_l5_joint" forcerange="-24 24" />
+    <position name="leg_l6_joint" joint="leg_l6_joint" forcerange="-24 24" />
+    <position name="leg_r1_joint" joint="leg_r1_joint" forcerange="-140 140" />
+    <position name="leg_r2_joint" joint="leg_r2_joint" forcerange="-140 140" />
+    <position name="leg_r3_joint" joint="leg_r3_joint" forcerange="-140 140" />
+    <position name="leg_r4_joint" joint="leg_r4_joint" forcerange="-140 140" />
+    <position name="leg_r5_joint" joint="leg_r5_joint" forcerange="-24 24" />
+    <position name="leg_r6_joint" joint="leg_r6_joint" forcerange="-24 24" />
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="left_foot" name="left_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="right_foot" name="right_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.8035 1 0 0 0
+      0.0 0.0 -0.4 0.8 -0.4 0.0
+      0.0 0.0 0.4 -0.8 0.4 0.0"/>
+  </keyframe>
+</mujoco>

@@ -1,0 +1,181 @@
+<mujoco model="bittle">
+  <compiler angle="radian" assetdir="assets"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <position forcelimited="true" forcerange="-0.2941995 0.2941995" kp="25" kv="0.5"/>
+    <joint damping="0.01" armature="0.003" frictionloss="0.00002"/>
+    <default class="foot">
+      <geom type="sphere" size="0.0065" priority="1" solimp="0.015 1 0.0065" condim="6" friction="1.0 0.02 0.01" group="4"/>
+    </default>
+    <default class="reward_collision_sphere">
+      <geom group="5" rgba="1 0 0 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+
+    <mesh name="base_frame" file="base_frame.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="base_frame.001" file="base_frame.001.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="battery" file="battery.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="battery.001" file="battery.001.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="cover" file="cover.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="cover.001" file="cover.001.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="left_knee.001" file="left_knee.001.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="left_knee.002" file="left_knee.002.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.001" file="shoulder.001.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.004" file="shoulder.004.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="left_knee" file="left_knee.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="left_knee.003" file="left_knee.003.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder" file="shoulder.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.007" file="shoulder.007.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="right_knee.001" file="right_knee.001.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="right_knee.002" file="right_knee.002.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.002" file="shoulder.002.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.005" file="shoulder.005.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="right_knee" file="right_knee.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="right_knee.003" file="right_knee.003.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.003" file="shoulder.003.obj" scale="0.1 0.1 0.1"/>
+    <mesh name="shoulder.006" file="shoulder.006.obj" scale="0.1 0.1 0.1"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk" pos="0 0 0">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <site name="imu"/>
+
+      <inertial pos="0.0 0.0 0.0" mass="0.108" fullinertia="0.0000613 0.0001562 0.0002107 0.0 0.0 -0.000002"/>
+
+      <geom rgba="0.97 0.71 0.19 1.0" name="trunk_1" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="base_frame"/>
+      <geom rgba="0.97 0.71 0.19 1.0" name="trunk_2" type="mesh" mesh="base_frame.001"/>
+      <geom rgba="0.1 0.1 0.1 1.0" name="trunk_3" pos="0.000047 -0.000917 -0.004848" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="battery"/>
+      <geom rgba="0.1 0.1 0.1 1.0" name="trunk_4" pos="0.000047 -0.000917 -0.004848" type="mesh" mesh="battery.001"/>
+      <geom rgba="0.1 0.1 0.1 1.0" name="trunk_5" pos="0.00014 0 0.01251" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="cover"/>
+      <geom rgba="0.1 0.1 0.1 1.0" name="trunk_6" pos="0.00014 0 0.01251" type="mesh" mesh="cover.001"/>
+      <geom class="reward_collision_sphere" pos="0 0 0.005" size="0.025"/>
+
+      <camera name="ego_camera" pos="0.06 0 0.03" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="left-back-shoulder-link" pos="-0.051923  0.044596 -0.002102" quat="0.499998 0.5 -0.500002 -0.5">
+        <inertial pos="-0.004372 -0.024575 0" quat="0.707107 0.707107 0 0" mass="0.006" diaginertia="0.0000044 0.0000044 2e-07"/>
+        <joint name="left_back_shoulder_joint" pos="0 0 0" axis="-1 0 0" range="-1.5708 1.22173"/>
+        <geom name="LB_thigh_1" pos="-0.004372 -0.024575 0" quat="0.499998 -0.5 0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="shoulder.001" rgba="0.97 0.71 0.19 1.0"/>
+        <geom name="LB_thigh_2" pos="-0.004372 -0.024575 0" quat="0.499998 -0.5 0.5 0.500002" type="mesh" mesh="shoulder.004" rgba="0.97 0.71 0.19 1.0"/>
+        <geom class="reward_collision_sphere" pos="0 0 0" size="0.015"/>
+        <body name="left-back-knee-link" pos="0 -0.049172 0">
+          <inertial pos="0.014638 0 -0.008998" quat="0.637092 0.28669 0.644989 0.309696" mass="0.017" diaginertia="0.00000446667 0.00000446667 0.00000446667"/>
+          <joint name="left_back_knee_joint" pos="0 0 0" axis="-1 0 0" range="-1.48353 1.22173"/>
+          <geom name="LB_calf_1" rgba="0.1 0.1 0.1 1.0" pos="0.014638 0 -0.008998" quat="0.499998 -0.5 0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="left_knee.001"/>
+          <geom name="LB_calf_2" rgba="0.1 0.1 0.1 1.0" pos="0.014638 0 -0.008998" quat="0.499998 -0.5 0.5 0.500002" type="mesh" mesh="left_knee.002"/>
+          <geom class="foot" name="LB_foot" pos="0.01 -0.001 -0.05"/>
+          <site name="LB_foot" class="foot" pos="0.01 -0.001 -0.05"/>
+          <geom class="reward_collision_sphere" pos="0.009 0 0" size="0.018"/>
+          <geom class="reward_collision_sphere" pos="0.01 -0.001 -0.05" size="0.0075"/>
+        </body>
+      </body>
+      <body name="left-front-shoulder-link" pos="0.052264 0.044596 -0.002102" quat="0.499998 0.5 -0.500002 -0.5">
+        <inertial pos="-0.004372 -0.024575 0" quat="0.707107 0.707107 0 0" mass="0.006" diaginertia="0.0000044 0.0000044 2e-07"/>
+        <joint name="left_front_shoulder_joint" pos="0 0 0" axis="-1 0 0" range="-1.5708 1.22173"/>
+        <geom name="LF_thigh_1" pos="-0.004372 -0.024575 0" quat="0.499998 -0.5 0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="shoulder" rgba="0.97 0.71 0.19 1.0"/>
+        <geom name="LF_thigh_2" pos="-0.004372 -0.024575 0" quat="0.499998 -0.5 0.5 0.500002" type="mesh" mesh="shoulder.007" rgba="0.97 0.71 0.19 1.0"/>
+        <geom class="reward_collision_sphere" pos="0 0 0" size="0.015"/>
+        <body name="left-front-knee-link" pos="0 -0.049172 6e-06">
+          <inertial pos="0.014614 0 -0.009232" quat="0.637092 0.28669 0.644989 0.309696" mass="0.017" diaginertia="0.00000446667 0.00000446667 0.00000446667"/>
+          <joint name="left_front_knee_joint" pos="0 0 0" axis="-1 0 0" range="-1.48353 1.22173"/>
+          <geom name="LF_calf_1" rgba="0.1 0.1 0.1 1.0" pos="0.014614 0 -0.009232" quat="0.499998 -0.5 0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="left_knee"/>
+          <geom name="LF_calf_2" rgba="0.1 0.1 0.1 1.0" pos="0.014614 0 -0.009232" quat="0.499998 -0.5 0.5 0.500002" type="mesh" mesh="left_knee.003"/>
+          <geom class="foot" name="LF_foot" pos="0.01 -0.001 -0.05"/>
+          <site name="LF_foot" class="foot" pos="0.01 -0.001 -0.05"/>
+          <geom class="reward_collision_sphere" pos="0.009 0 0" size="0.018"/>
+          <geom class="reward_collision_sphere" pos="0.01 -0.001 -0.05" size="0.0075"/>
+        </body>
+      </body>
+      <body name="right-back-shoulder-link" pos="-0.051923 -0.045149 -0.002102" quat="0.499998 -0.5 0.500002 -0.5">
+        <inertial pos="0.00777 0.024575 0" quat="0.707107 0.707107 0 0" mass="0.006" diaginertia="0.0000044 0.0000044 2e-07"/>
+        <joint name="right_back_shoulder_joint" pos="0 0 0" axis="1 0 0" range="-1.22173 1.5708"/>
+        <geom name="RB_thigh_1" pos="0.00777 0.024575 0" quat="0.499998 0.5 -0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="shoulder.002" rgba="0.97 0.71 0.19 1.0"/>
+        <geom name="RB_thigh_2" pos="0.00777 0.024575 0" quat="0.499998 0.5 -0.5 0.500002" type="mesh" mesh="shoulder.005" rgba="0.97 0.71 0.19 1.0"/>
+        <geom class="reward_collision_sphere" pos="0 0 0" size="0.015"/>
+        <body name="right-back-knee-link" pos="0.003996 0.049938 0.000015" quat="1.32679e-06 0 0 1">
+          <inertial pos="0.01382 -0.000238 0.008426" quat="0.639078 0.292189 0.643573 0.303345" mass="0.017" diaginertia="0.0000045 0.0000045 0.0000045"/>
+          <joint name="right_back_knee_joint" pos="0 0 0" axis="-1 0 0" range="-1.22173 1.48353"/>
+          <geom name="RB_calf_1" rgba="0.1 0.1 0.1 1.0" pos="0.01382 -0.000238 0.008426" quat="0.499998 -0.5 -0.5 -0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="right_knee.001"/>
+          <geom name="RB_calf_2" rgba="0.1 0.1 0.1 1.0" pos="0.01382 -0.000238 0.008426" quat="0.499998 -0.5 -0.5 -0.500002" type="mesh" mesh="right_knee.002"/>
+          <geom class="foot" name="RB_foot" pos="0.011 0.001 0.05"/>
+          <site name="RB_foot" class="foot" pos="0.011 0.001 0.05"/>
+          <geom class="reward_collision_sphere" pos="0.007 0 0" size="0.018"/>
+          <geom class="reward_collision_sphere" pos="0.0115 -0.001 0.05" size="0.0075"/>
+        </body>
+      </body>
+      <body name="right-front-shoulder-link" pos="0.052264 -0.045149 -0.002102" quat="0.499998 -0.5 0.500002 -0.5">
+        <inertial pos="0.00777 0.024575 0" quat="0.707107 0.707107 0 0" mass="0.006" diaginertia="0.0000044 0.0000044 2e-07"/>
+        <joint name="right_front_shoulder_joint" pos="0 0 0" axis="1 0 0" range="-1.22173 1.5708"/>
+        <geom name="RF_thigh_1" pos="0.00777 0.024575 0" quat="0.499998 0.5 -0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="shoulder.003" rgba="0.97 0.71 0.19 1.0"/>
+        <geom name="RF_thigh_2" pos="0.00777 0.024575 0" quat="0.499998 0.5 -0.5 0.500002" type="mesh" mesh="shoulder.006" rgba="0.97 0.71 0.19 1.0"/>
+        <geom class="reward_collision_sphere" pos="0 0 0" size="0.015"/>
+        <body name="right-front-knee-link" pos="0.003996 0.049938 6e-06" quat="1.32679e-06 0 0 1">
+          <inertial pos="0.01382 -0.000238 0.009497" quat="0.639078 0.292189 0.643573 0.303345" mass="0.017" diaginertia="0.0000045 0.0000045 0.0000045"/>
+          <joint name="right_front_knee_joint" pos="0 0 0" axis="-1 0 0" range="-1.22173 1.48353"/>
+          <geom name="RF_calf_1" rgba="0.1 0.1 0.1 1.0" pos="0.01382 -0.000238 0.009497" quat="0.499998 -0.5 -0.5 -0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="right_knee"/>
+          <geom name="RF_calf_2" rgba="0.1 0.1 0.1 1.0" pos="0.01382 -0.00238 0.009497" quat="0.499998 -0.5 -0.5 -0.500002" type="mesh" mesh="right_knee.003"/>
+          <geom class="foot" name="RF_foot" pos="0.011 0.001 0.05"/>
+          <site name="RF_foot" class="foot" pos="0.011 0.001 0.05"/>
+          <geom class="reward_collision_sphere" pos="0.007 0 0" size="0.018"/>
+          <geom class="reward_collision_sphere" pos="0.0115 -0.001 0.05" size="0.0075"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="LB_foot" geom2="floor"/>
+    <pair geom1="LF_foot" geom2="floor"/>
+    <pair geom1="RB_foot" geom2="floor"/>
+    <pair geom1="RF_foot" geom2="floor"/>
+  </contact>
+
+
+  <actuator>
+    <position name="left_back_shoulder" joint="left_back_shoulder_joint"/>
+    <position name="left_back_knee" joint="left_back_knee_joint"/>
+    <position name="left_front_shoulder" joint="left_front_shoulder_joint"/>
+    <position name="left_front_knee" joint="left_front_knee_joint"/>
+    <position name="right_back_shoulder" joint="right_back_shoulder_joint"/>
+    <position name="right_back_knee" joint="right_back_knee_joint"/>
+    <position name="right_front_shoulder" joint="right_front_shoulder_joint"/>
+    <position name="right_front_knee" joint="right_front_knee_joint"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="LB_foot" name="LB_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="LF_foot" name="LF_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RB_foot" name="RB_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RF_foot" name="RF_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.094 1 0 0 0 0.6 0.5 0.6 0.5 -0.6 -0.5 -0.6 -0.5"/>
+  </keyframe>
+</mujoco>

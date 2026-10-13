@@ -1,0 +1,14 @@
+python experiment.py \
+    --algorithm.name=urmav2_for_codesign.mujoco \
+    --algorithm.eval_design_particle_path="runs/shape_your_body/go2/seed0/designs/vgds_seed0.npz" \
+    --environment.name=locomotion.urmav2_for_codesign.mujoco \
+    --environment.train_robots="('unitree_go2',)" \
+    --environment.nr_envs=1 \
+    --environment.domain_randomization.initial_state.type="default" \
+    --environment.domain_randomization.sampling_type="none" \
+    --environment.domain_randomization.perturbation.sampling_type="none" \
+    --environment.domain_randomization.observation_noise.type="none" \
+    --environment.add_goal_arrow=True \
+    --runner.mode="test" \
+    --runner.track_console=True \
+    --runner.load_model="runs/shape_your_body/go2/seed0/models/latest.model"

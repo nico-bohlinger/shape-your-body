@@ -1,0 +1,231 @@
+<mujoco model="barkour_vb">
+  <compiler angle="radian" assetdir="assets" autolimits="true"/>
+
+  <option cone="pyramidal" impratio="1" solver="Newton" iterations="1" ls_iterations="4" density="1.2" viscosity="0.00002">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <site size="0.01" group="5"/>
+    <geom type="mesh" solref="-1000 -80" contype="0" conaffinity="0" group="1"/>
+    <position forcelimited="true" forcerange="-12.0 12.0" kp="30" kv="0.5"/>
+    <default class="bkvb">
+      <geom type="mesh"/>
+      <joint damping="0.024" frictionloss="0.13" armature="0.011"/>
+      <default class="abduction">
+        <geom rgba="0.980392 0.713726 0.00392157 1" mesh="abduction"/>
+      </default>
+      <default class="lower_leg">
+        <geom rgba="0.615686 0.811765 0.929412 1" mesh="lower_leg"/>
+      </default>
+      <default class="upper_leg">
+        <geom rgba="0.615686 0.811765 0.929412 1" mesh="upper_leg"/>
+      </default>
+      <default class="upper_leg_left">
+        <geom rgba="0.972549 0.529412 0.00392157 1" mesh="upper_leg_left"/>
+      </default>
+      <default class="upper_leg_right">
+        <geom rgba="0.513726 0.737255 0.407843 1" mesh="upper_leg_right"/>
+      </default>
+      <default class="torso">
+        <geom rgba="0.8 0.74902 0.913725 1"/>
+      </default>
+      <default class="foot">
+        <geom type="sphere" size="0.0174" priority="1" solimp="0.015 1 0.0174" condim="6" friction="0.8 0.02 0.01" group="4"/>
+      </default>
+      <default class="reward_collision_sphere">
+        <geom group="5" rgba="1 0 0 1" type="sphere"/>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.95 0.95 0.95" rgb2="0.95 0.95 0.95" width="100" height="100" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.345 0.575 0.748" rgb2="0.345 0.575 0.748" mark="edge" markrgb="1.0 1.0 1.0" width="512" height="512"/>
+    <material name="MatPlane" texture="texplane" texrepeat="2 2" texuniform="true" specular="0.9" shininess="0.5" reflectance="0.0" rgba="1 1 1 1"/>
+
+    <mesh name="camera_cover" file="camera_cover.stl"/>
+    <mesh name="neck" file="neck.stl"/>
+    <mesh name="intel_realsense_depth_camera_d435" file="intel_realsense_depth_camera_d435.stl"/>
+    <mesh name="handle" file="handle.stl"/>
+    <mesh name="torso" file="torso.stl"/>
+    <mesh name="abduction" file="abduction.stl"/>
+    <mesh name="upper_leg" file="upper_leg.stl"/>
+    <mesh name="upper_leg_left" file="upper_leg_left.stl"/>
+    <mesh name="upper_leg_right" file="upper_leg_right.stl"/>
+    <mesh name="lower_leg" file="lower_leg.stl"/>
+    <mesh name="foot" file="foot.stl"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <map shadowclip="0.5"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" material="MatPlane" size="100 100 0.125" type="plane" group="0"/>
+    <light name="toplight_shadow" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.55 0.55 0.55" specular="0.12 0.12 0.12" ambient="0.04 0.04 0.04" castshadow="true"/>
+    <light name="toplight_fill" directional="true" pos="0 0 5" dir="0.1 0.1 -1" diffuse="0.30 0.30 0.30" specular="0.08 0.08 0.08" ambient="0.04 0.04 0.04" castshadow="false"/>
+
+    <body name="trunk" childclass="bkvb">
+      <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
+
+      <freejoint/>
+
+      <site name="imu" pos="0.010715 -0.00025 -0.06"/>
+
+      <inertial pos="0.0055238 -0.000354563 0.00835899" quat="-0.00150849 0.694899 -0.000198355 0.719106" mass="6.04352"
+        diaginertia="0.144664 0.12027 0.0511405"/>
+
+      <geom class="torso" pos="-7.85127e-05 -0.000500734 0" mesh="neck"/>
+      <geom class="torso" pos="-7.85127e-05 -0.000500734 0" mesh="camera_cover" name="trunk_1"/>
+      <geom class="torso" pos="-7.85127e-05 -0.000500734 0" mesh="handle" name="trunk_2"/>
+      <geom class="torso" pos="0.319921 -0.000500734 0.0651248" quat="1 0 0 1" mesh="intel_realsense_depth_camera_d435"/>
+      <geom class="torso" pos="-7.85127e-05 -0.000500734 0" mesh="torso" name="trunk_3"/>
+      <geom class="reward_collision_sphere" pos="0 0 0" size="0.12"/>
+      <geom class="reward_collision_sphere" pos="0.302 0 0.065" size="0.055"/>
+
+      <camera name="ego_camera" pos="0.302 0 0.065" quat="-0.5 -0.5 0.5 0.5"/>
+
+      <body name="leg_front_left" pos="0.171671 0.0892493 -9.8e-06" quat="1 -1 -1 1">
+        <inertial pos="0.00547726 -0.000288034 -0.0602191" quat="0.999837 0.0103892 -0.0143715 -0.00325656" mass="0.787"
+          diaginertia="0.00143831 0.00117023 0.00100011"/>
+        <joint name="abduction_front_left" axis="0 0 -1" range="-1.0472 1.0472"/>
+        <geom class="abduction" pos="0 0.000111373 0.0029" quat="1 1 0 0"/>
+        <body name="upper_leg_front_left" pos="0.03085 0 -0.065" quat="0 -1 0 1">
+          <inertial pos="-0.0241397 0.00402429 -0.0453038" quat="0.0673193 0.647966 -0.00518142 0.75867" mass="1.155"
+            diaginertia="0.00562022 0.00519471 0.0012633"/>
+          <joint name="hip_front_left" axis="0 0 -1" range="-3.02902 1.54706"/>
+          <geom class="upper_leg" pos="0.0679 0.000111373 0.03085" quat="1 1 1 -1"/>
+          <geom class="upper_leg_left" pos="0 0 -0.05075" quat="0 0 1 0" name="FL_thigh"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.09"/>
+          <body name="lower_leg_front_left" pos="-0.19 0 -0.069575" quat="0 0 1 0">
+            <inertial pos="-0.0895493 -0.0301957 -3.02082e-08" quat="-0.101465 0.699789 0.101465 0.699789"
+              mass="0.171238" diaginertia="0.00137406 0.00135746 3.05521e-05"/>
+            <joint name="knee_front_left" range="0 2.44346"/>
+            <geom class="lower_leg" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576" name="FL_calf"/>
+            <geom rgba="0.231373 0.380392 0.705882 1" mesh="foot" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576"/>
+            <geom name="FL_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <site name="FL_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <geom class="reward_collision_sphere" pos="0.005 -0.005 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="-0.2145 -0.078 0.0" size="0.02"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_hind_left" pos="-0.171829 0.0892493 -9.8e-06" quat="1 -1 -1 1">
+        <inertial pos="0.00547726 0.000288034 0.0602191" quat="0.999837 0.0103892 0.0143715 0.00325656" mass="0.787"
+          diaginertia="0.00143831 0.00117023 0.00100011"/>
+        <joint name="abduction_hind_left" range="-1.0472 1.0472"/>
+        <geom class="abduction" pos="0 -0.000111373 -0.0029" quat="1 -1 0 0"/>
+        <body name="upper_leg_hind_left" pos="0.03085 0 0.065" quat="0 1 0 -1">
+          <inertial pos="-0.0241397 0.00402429 -0.0453038" quat="0.0673193 0.647966 -0.00518142 0.75867" mass="1.155"
+            diaginertia="0.00562022 0.00519471 0.0012633"/>
+          <joint name="hip_hind_left" axis="0 0 -1" range="-3.02902 1.54706"/>
+          <geom class="upper_leg" pos="0.0679 0.000111373 0.03085" quat="1 1 1 -1"/>
+          <geom class="upper_leg_left" pos="0 0 -0.05075" quat="0 0 1 0" name="RL_thigh"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.09"/>
+          <body name="lower_leg_2" pos="-0.19 0 -0.069925" quat="0 0 1 0">
+            <inertial pos="-0.0895493 -0.0301957 -3.02082e-08" quat="-0.101465 0.699789 0.101465 0.699789"
+              mass="0.171238" diaginertia="0.00137406 0.00135746 3.05521e-05"/>
+            <joint name="knee_hind_left" range="0 2.44346"/>
+            <geom class="lower_leg" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576" name="RL_calf"/>
+            <geom rgba="0.231373 0.380392 0.705882 1" mesh="foot" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576"/>
+            <geom name="RL_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <site name="RL_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <geom class="reward_collision_sphere" pos="0.005 -0.005 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="-0.2145 -0.078 0.0" size="0.02"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_front_right" pos="0.171671 -0.0907507 -9.8e-06" quat="1 -1 1 -1">
+        <inertial pos="0.00547726 0.000288034 0.0602191" quat="0.999837 0.0103892 0.0143715 0.00325656" mass="0.787"
+          diaginertia="0.00143831 0.00117023 0.00100011"/>
+        <joint name="abduction_front_right" range="-1.0472 1.0472"/>
+        <geom class="abduction" pos="0 -0.000111373 -0.0029" quat="1 -1 0 0"/>
+        <body name="upper_leg_front_right" pos="0.03085 0 0.065" quat="0 -1 0 -1">
+          <inertial pos="-0.0241393 0.00324567 0.0453036" quat="-0.00604983 0.756969 -0.0854547 0.64781" mass="1.155"
+            diaginertia="0.00563107 0.00519539 0.00126472"/>
+          <joint name="hip_front_right" range="-1.54706 3.02902"/>
+          <geom class="upper_leg" pos="0.0679 -0.000111373 -0.03085" quat="1 -1 -1 -1"/>
+          <geom class="upper_leg_right" pos="0 0 0.05075" quat="0 0 -1 0" name="FR_thigh"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.09"/>
+          <body name="lower_leg_3" pos="-0.19 0 0.069575" quat="0 0 -1 0">
+            <inertial pos="-0.0895493 -0.0301957 -3.02082e-08" quat="-0.101465 0.699789 0.101465 0.699789"
+              mass="0.171238" diaginertia="0.00137406 0.00135746 3.05521e-05"/>
+            <joint name="knee_front_right" axis="0 0 -1" range="-2.44346 0"/>
+            <geom class="lower_leg" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576" name="FR_calf"/>
+            <geom rgba="0.231373 0.380392 0.705882 1" mesh="foot" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576"/>
+            <geom name="FR_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <site name="FR_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <geom class="reward_collision_sphere" pos="0.005 -0.005 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="-0.2145 -0.078 0.0" size="0.02"/>
+          </body>
+        </body>
+      </body>
+      <body name="leg_hind_right" pos="-0.171829 -0.0907507 -9.8e-06" quat="1 -1 1 -1">
+        <inertial pos="0.00547726 -0.000288034 -0.0600191" quat="0.999837 0.0103892 -0.0143715 -0.00325656" mass="0.787"
+          diaginertia="0.00143831 0.00117023 0.00100011"/>
+        <joint name="abduction_hind_right" axis="0 0 -1" range="-1.0472 1.0472"/>
+        <geom class="abduction" pos="0 0.000111373 0.0031" quat="1 1 0 0"/>
+        <body name="upper_leg_hind_right" pos="0.03085 0 -0.0648" quat="0 1 0 1">
+          <inertial pos="-0.0241393 0.00324567 0.0453036" quat="-0.00604983 0.756969 -0.0854547 0.64781" mass="1.155"
+            diaginertia="0.00563107 0.00519539 0.00126472"/>
+          <joint name="hip_hind_right" range="-1.54706 3.02902"/>
+          <geom class="upper_leg" pos="0.0679 -0.000111373 -0.03085" quat="1 -1 -1 -1"/>
+          <geom class="upper_leg_right" pos="0 0 0.05075" quat="0 0 -1 0" name="RR_thigh"/>
+          <geom class="reward_collision_sphere" pos="0 0 0" size="0.09"/>
+          <body name="lower_leg_4" pos="-0.19 0 0.069575" quat="0 0 -1 0">
+            <inertial pos="-0.0895493 -0.0301957 -3.02082e-08" quat="-0.101465 0.699789 0.101465 0.699789"
+              mass="0.171238" diaginertia="0.00137406 0.00135746 3.05521e-05"/>
+            <joint name="knee_hind_right" axis="0 0 -1" range="-2.44346 0"/>
+            <geom class="lower_leg" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576" name="RR_calf"/>
+            <geom rgba="0.231373 0.380392 0.705882 1" mesh="foot" pos="-0.0649838 0.178542 0" quat="0.819152 0 0 -0.573576"/>
+            <geom name="RR_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <site name="RR_foot" class="foot" pos="-0.2145 -0.078 0.0"/>
+            <geom class="reward_collision_sphere" pos="0.005 -0.005 0" size="0.05"/>
+            <geom class="reward_collision_sphere" pos="-0.2145 -0.078 0.0" size="0.02"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <pair geom1="FL_foot" geom2="floor"/>
+    <pair geom1="RL_foot" geom2="floor"/>
+    <pair geom1="FR_foot" geom2="floor"/>
+    <pair geom1="RR_foot" geom2="floor"/>
+  </contact>
+
+  <actuator>
+    <position name="abduction_front_left" joint="abduction_front_left"/>
+    <position name="hip_front_left" joint="hip_front_left"/>
+    <position name="knee_front_left" joint="knee_front_left"/>
+    <position name="abduction_hind_left" joint="abduction_hind_left"/>
+    <position name="hip_hind_left" joint="hip_hind_left"/>
+    <position name="knee_hind_left" joint="knee_hind_left"/>
+    <position name="abduction_front_right" joint="abduction_front_right"/>
+    <position name="hip_front_right" joint="hip_front_right"/>
+    <position name="knee_front_right" joint="knee_front_right"/>
+    <position name="abduction_hind_right" joint="abduction_hind_right"/>
+    <position name="hip_hind_right" joint="hip_hind_right"/>
+    <position name="knee_hind_right" joint="knee_hind_right"/>
+  </actuator>
+
+  <sensor>
+    <gyro site="imu" name="imu_angular_velocity"/>
+    <velocimeter site="imu" name="imu_linear_velocity"/>
+    <framelinvel objtype="site" objname="FL_foot" name="FL_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RL_foot" name="RL_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="FR_foot" name="FR_foot_global_linear_velocity"/>
+    <framelinvel objtype="site" objname="RR_foot" name="RR_foot_global_linear_velocity"/>
+  </sensor>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0.34 1 0 0 0
+      0.1 -0.8 1.5
+      -0.1 -0.8 1.5
+      -0.1 0.8 -1.5
+      0.1 0.8 -1.5"/>
+  </keyframe>
+</mujoco>
