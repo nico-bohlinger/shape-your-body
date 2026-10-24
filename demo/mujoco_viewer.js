@@ -837,7 +837,7 @@ export class MuJoCoViewer {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.0;
+    this.renderer.toneMappingExposure = 0.9;
     this.container.appendChild(this.renderer.domElement);
 
     // Scene
@@ -881,32 +881,34 @@ export class MuJoCoViewer {
 
     // Lighting
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.9);
     dirLight.position.set(2, 4, 3);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.set(1024, 1024);
-    const shadowRange = extent * 2;
+    const shadowRange = 6;
     dirLight.shadow.camera.near = 0.1;
-    dirLight.shadow.camera.far  = extent * 10;
+    dirLight.shadow.camera.far  = 20;
     dirLight.shadow.camera.left   = -shadowRange;
     dirLight.shadow.camera.right  =  shadowRange;
     dirLight.shadow.camera.top    =  shadowRange;
     dirLight.shadow.camera.bottom = -shadowRange;
-    this.scene.add(dirLight);
-    this.scene.add(new THREE.DirectionalLight(0xffffff, 0.3).translateX(-2).translateY(1).translateZ(-1));
+    this.keyLight = dirLight;
+    this.scene.add(dirLight, dirLight.target);
+    this.scene.add(new THREE.DirectionalLight(0xffffff, 0.8).translateX(-2).translateY(1).translateZ(-1));
 
     // Ground
     const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(20, 20),
-      new THREE.ShadowMaterial({ opacity: 0.12 })
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.MeshStandardMaterial({ color: this.bgColor, roughness: 0.75, metalness: 0.12 })
     );
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     this.scene.add(ground);
 
-    const gridSize = Math.max(4, Math.ceil(extent * 4));
-    const grid = new THREE.GridHelper(gridSize, gridSize, 0xcccccc, 0xe0e0e0);
-    grid.position.y = 0.001;
+    const gridSize = 100;
+    const grid = new THREE.GridHelper(gridSize, gridSize * 2, 0xc9ccd1, 0xc9ccd1);
+    grid.position.y = 0.002;
+    grid.material.toneMapped = false;
     this.scene.add(grid);
 
     // Drag arrow
@@ -1293,6 +1295,13 @@ export class MuJoCoViewer {
   _animate(time) {
     if (this._disposed || this._frozen) return;
     requestAnimationFrame(this._animate);
+
+    const bounds = this.container.getBoundingClientRect();
+    if (document.hidden || bounds.bottom <= 0 || bounds.top >= window.innerHeight) {
+      this._lastTime = time;
+      this._physicsAccumulator = 0;
+      return;
+    }
 
     if (this.paused) {
       this.controls.update();
