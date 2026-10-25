@@ -1,4 +1,4 @@
-import { MuJoCoViewer } from './mujoco_viewer.js?v=light-v2';
+import { MuJoCoViewer } from './mujoco_viewer.js?v=light-v3';
 import { loadPolicyBundle } from './urma_policy.js';
 import { PolicyRunner } from './policy_runner.js';
 
@@ -19,49 +19,49 @@ const ROBOTS = {
         name: 'Unitree Go2',
         dir: 'unitree_go2',
         policyId: 'unitree_go2',
-        cameraPos: [1.44, 0.69, 1.58],
+        cameraPos: [1.87, 0.82, 2.05],
         cameraTarget: [0, 0.25, 0],
     },
     mit_humanoid: {
         name: 'MIT Humanoid',
         dir: 'mit_humanoid',
         policyId: 'mit_humanoid',
-        cameraPos: [1.93, 1.19, 2.14],
+        cameraPos: [2.51, 1.41, 2.78],
         cameraTarget: [0, 0.45, 0],
     },
     golem: {
         name: 'Golem',
         dir: 'golem',
         policyId: 'golem',
-        cameraPos: [1.44, 0.58, 1.58],
+        cameraPos: [1.87, 0.72, 2.05],
         cameraTarget: [0, 0.1, 0],
     },
     anymal_c: {
         name: 'ANYmal C',
         dir: 'anymal_c',
         policyId: 'all50',
-        cameraPos: [1.75, 0.89, 1.89],
+        cameraPos: [2.27, 1.04, 2.46],
         cameraTarget: [0, 0.4, 0],
     },
     booster_t1: {
         name: 'Booster T1',
         dir: 'booster_t1',
         policyId: 'all50',
-        cameraPos: [1.89, 1.13, 2.10],
+        cameraPos: [2.46, 1.32, 2.73],
         cameraTarget: [0, 0.5, 0],
     },
     mini_pi: {
         name: 'Mini PI',
         dir: 'mini_pi',
         policyId: 'all50',
-        cameraPos: [1.05, 0.55, 1.16],
+        cameraPos: [1.37, 0.66, 1.51],
         cameraTarget: [0, 0.2, 0],
     },
     fourier_gr1t2: {
         name: 'Fourier GR1-T2',
         dir: 'fourier_gr1t2',
         policyId: 'all50',
-        cameraPos: [2.38, 1.54, 2.59],
+        cameraPos: [3.09, 1.79, 3.37],
         cameraTarget: [0, 0.7, 0],
     },
 };
@@ -321,8 +321,9 @@ function refreshTabs() {
         : 'reference (slider disabled)';
 
     playBtnEl.classList.toggle('active', !state.playing);
-    playBtnEl.textContent = state.playing ? 'Pause' : 'Play';
+    playBtnEl.querySelector('.syb-view-label').textContent = state.playing ? 'Pause' : 'Play';
     followBtnEl.classList.toggle('active', state.follow);
+    followBtnEl.setAttribute('aria-pressed', String(state.follow));
 }
 
 function updateCommandFromUI() {

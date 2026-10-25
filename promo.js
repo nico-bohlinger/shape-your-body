@@ -50,7 +50,7 @@ const demo = document.getElementById('syb-demo');
 const demoObserver = new IntersectionObserver(entries => {
     if (entries.some(entry => entry.isIntersecting)) {
         demoObserver.disconnect();
-        import('./demo/demo.js?v=light-v2').then(module => module.selectDesign(null)).catch(() => {
+        import('./demo/demo.js?v=light-v3').then(module => module.selectDesign(null)).catch(() => {
             document.getElementById('syb-status').textContent = 'The interactive demo could not load. Reload to try again.';
         });
     }

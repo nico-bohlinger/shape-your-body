@@ -844,7 +844,7 @@ export class MuJoCoViewer {
     this.scene = new THREE.Scene();
     const bg = new THREE.Color(this.bgColor);
     this.scene.background = bg;
-    this.scene.fog = new THREE.Fog(bg, 4, 10);
+    this.scene.fog = new THREE.Fog(bg, 6, 16);
 
     // Camera — auto-frame from model stat if no position given
     this.camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 100);
@@ -896,20 +896,29 @@ export class MuJoCoViewer {
     this.scene.add(dirLight, dirLight.target);
     this.scene.add(new THREE.DirectionalLight(0xffffff, 0.8).translateX(-2).translateY(1).translateZ(-1));
 
-    // Ground
+    // Ground with a half-metre grid drawn into a 1 m texture tile
+    const tile = document.createElement('canvas');
+    tile.width = tile.height = 256;
+    const tileContext = tile.getContext('2d');
+    tileContext.fillStyle = this.bgColor;
+    tileContext.fillRect(0, 0, 256, 256);
+    tileContext.fillStyle = '#c2c6cc';
+    for (const offset of [0, 128, 256]) {
+      tileContext.fillRect(offset - 2, 0, 4, 256);
+      tileContext.fillRect(0, offset - 2, 256, 4);
+    }
+    const gridTexture = new THREE.CanvasTexture(tile);
+    gridTexture.colorSpace = THREE.SRGBColorSpace;
+    gridTexture.wrapS = gridTexture.wrapT = THREE.RepeatWrapping;
+    gridTexture.repeat.set(100, 100);
+    gridTexture.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
     const ground = new THREE.Mesh(
       new THREE.PlaneGeometry(100, 100),
-      new THREE.MeshStandardMaterial({ color: this.bgColor, roughness: 0.75, metalness: 0.12 })
+      new THREE.MeshStandardMaterial({ map: gridTexture, roughness: 0.75, metalness: 0.12 })
     );
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     this.scene.add(ground);
-
-    const gridSize = 100;
-    const grid = new THREE.GridHelper(gridSize, gridSize * 2, 0xc9ccd1, 0xc9ccd1);
-    grid.position.y = 0.002;
-    grid.material.toneMapped = false;
-    this.scene.add(grid);
 
     // Drag arrow
     if (this.enableDrag) {
